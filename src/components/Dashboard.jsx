@@ -6,40 +6,42 @@ function Dashboard() {
     "No Iniciada": [],
     "En progreso": [],
     "Finalizado": [],
+    "Cancelado": [],
   });
 
   useEffect(() => {
     console.log("useEffect ejecutado");
-    
+
     const fetchTasks = async () => {
       try {
         const response = await fetch('http://localhost:4000/api/v1/task/');
         const data = await response.json();
-  
+
         console.log("Datos obtenidos del backend:", data);
-  
+
         const groupedColumns = {
           "No Iniciada": [],
           "En progreso": [],
           "Finalizado": [],
+          "Cancelado": [],
         };
-  
+
         const tasksWithIds = data.tasks.map((task) => ({
           ...task,
           id: task.id || task._id, // Garantizar que id exista
         }));
-  
+
         tasksWithIds.forEach((task) => {
           groupedColumns[task.progresion]?.push(task);
         });
-  
+
         console.log("groupedColumns después de procesar las tareas:", groupedColumns); // Verificar contenido
         setColumns(groupedColumns);
       } catch (error) {
         console.error('Error al cargar las tareas:', error);
       }
     };
-  
+
     fetchTasks();
   }, []);
 
@@ -50,6 +52,7 @@ function Dashboard() {
       "No Iniciada": "updateStatusToDo",
       "En progreso": "updateStatusInProgress",
       "Finalizado": "updateStatusFinished",
+      "Cancelado": "updateStatusCancelled",
     };
 
     const endpoint = endpointMap[targetColumnId];
@@ -66,6 +69,7 @@ function Dashboard() {
         console.log('Respuesta del backend:', result);
 
         if (response.ok) {
+          // Recargar tareas o actualizar el estado
           const updatedResponse = await fetch('http://localhost:4000/api/v1/task/');
           const updatedData = await updatedResponse.json();
 
@@ -73,6 +77,7 @@ function Dashboard() {
             "No Iniciada": [],
             "En progreso": [],
             "Finalizado": [],
+            "Cancelado": []
           };
 
           updatedData.tasks.forEach((task) => {

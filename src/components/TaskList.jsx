@@ -1,12 +1,25 @@
 import React from 'react';
 import Task from './Task';
 
-const TaskList = ({ tasks }) => (
-    <div>
-        {tasks.map((task, index) => (
-            <Task key={task.id} task={task} index={index} />
+function TaskList({ columnId, columnName, tasks, onDrop }) {
+  const handleDrop = (taskId) => {
+    onDrop(taskId, columnName);
+  };
+
+  return (
+    <div className="task-list">
+      <h2>{columnName}</h2>
+      <div
+        className="tasks"
+        onDrop={(e) => handleDrop(e.dataTransfer.getData('taskId'))}
+        onDragOver={(e) => e.preventDefault()}
+      >
+        {tasks.map((task) => (
+          <Task key={task._id} task={task} />
         ))}
+      </div>
     </div>
-);
+  );
+}
 
 export default TaskList;

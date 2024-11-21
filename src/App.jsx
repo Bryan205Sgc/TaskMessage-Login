@@ -20,7 +20,6 @@ const App = () => {
       const taskMap = {};
       const columnMap = { todo: [], inProgress: [], done: [] };
 
-      // Mapear tareas y columnas
       data.tasks.forEach((task) => {
         const id = task._id;
         taskMap[id] = {
@@ -62,11 +61,10 @@ const App = () => {
 
   const onDragEnd = async (event) => {
     const { active, over } = event;
-    if (!over) return;  // Si no se ha soltado en ningún lugar, no hacer nada
+    if (!over) return;
 
     console.log(`Tarea arrastrada con id: ${active.id}, Columna destino: ${over.id}`);
 
-    // Encontrar las columnas origen y destino
     const sourceColumn = Object.keys(columns).find((key) =>
       columns[key].taskIds.includes(active.id)
     );
@@ -88,7 +86,6 @@ const App = () => {
           break;
       }
 
-      // Realizar el fetch para actualizar la tarea
       await fetch(`http://localhost:4000/api/v1/task/${active.id}`, {
         method: "PUT",
         headers: {
@@ -97,12 +94,10 @@ const App = () => {
         body: JSON.stringify({ progresion: newProgression }),
       });
 
-      // Actualizar las columnas en el estado
       setColumns((prevColumns) => {
         const sourceTaskIds = [...prevColumns[sourceColumn].taskIds];
         const destinationTaskIds = [...prevColumns[destinationColumn].taskIds];
 
-        // Mover la tarea entre las columnas
         sourceTaskIds.splice(sourceTaskIds.indexOf(active.id), 1);
         destinationTaskIds.push(active.id);
 
@@ -116,7 +111,6 @@ const App = () => {
         };
       });
 
-      // Actualizar la tarea localmente
       setTasks((prevTasks) => ({
         ...prevTasks,
         [active.id]: {

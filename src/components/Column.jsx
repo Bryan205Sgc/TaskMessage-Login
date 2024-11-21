@@ -1,15 +1,15 @@
 import React from 'react';
-import Task from './Task';
 import { useDroppable } from '@dnd-kit/core';
+import Task from './Task';
 
 const Column = ({ columnId, title, tasks, onTaskDrop }) => {
   const { setNodeRef } = useDroppable({
-    id: columnId,  // Asegúrate de pasar el id correcto de la columna
+    id: columnId,
   });
 
   const handleDrop = (event) => {
     const taskId = event.dataTransfer.getData('taskId');
-    onTaskDrop(taskId, columnId);  // Pasar taskId y columnId al handler en Dashboard
+    onTaskDrop(taskId, columnId);  // Llama al manejador en App.js
   };
 
   return (
