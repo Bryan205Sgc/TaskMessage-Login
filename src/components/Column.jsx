@@ -1,30 +1,25 @@
 import React from 'react';
 import Task from './Task';
+import { useDroppable } from '@dnd-kit/core';
 
-function Column({ columnId, title, tasks, onTaskDrop }) {
+const Column = ({ columnId, title, tasks, onTaskDrop }) => {
+  const { setNodeRef } = useDroppable({
+    id: columnId,  // Asegúrate de pasar el id correcto de la columna
+  });
+
   const handleDrop = (event) => {
-    event.preventDefault();
     const taskId = event.dataTransfer.getData('taskId');
-    console.log(`Tarea dropeada con id: ${taskId} en columna: ${columnId}`); // Verifica que columnId no sea undefined
-    if (onTaskDrop) {
-      onTaskDrop(taskId, columnId);
-    }
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
+    onTaskDrop(taskId, columnId);  // Pasar taskId y columnId al handler en Dashboard
   };
 
   return (
-    <div className="column" onDrop={handleDrop} onDragOver={handleDragOver}>
+    <div ref={setNodeRef} className="column" onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
       <h2>{title}</h2>
-      <div className="task-list">
-        {tasks.map((task) => (
-          <Task key={task.id} task={task} />
-        ))}
-      </div>
+      {tasks.map((task) => (
+        <Task key={task.id} task={task} />
+      ))}
     </div>
   );
-}
+};
 
 export default Column;

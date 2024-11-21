@@ -9,32 +9,37 @@ function Dashboard() {
   });
 
   useEffect(() => {
+    console.log("useEffect ejecutado");
+    
     const fetchTasks = async () => {
       try {
         const response = await fetch('http://localhost:4000/api/v1/task/');
         const data = await response.json();
-
+  
+        console.log("Datos obtenidos del backend:", data);
+  
         const groupedColumns = {
           "No Iniciada": [],
           "En progreso": [],
           "Finalizado": [],
         };
-
+  
         const tasksWithIds = data.tasks.map((task) => ({
           ...task,
           id: task.id || task._id, // Garantizar que id exista
         }));
-
+  
         tasksWithIds.forEach((task) => {
           groupedColumns[task.progresion]?.push(task);
         });
-
+  
+        console.log("groupedColumns después de procesar las tareas:", groupedColumns); // Verificar contenido
         setColumns(groupedColumns);
       } catch (error) {
         console.error('Error al cargar las tareas:', error);
       }
     };
-
+  
     fetchTasks();
   }, []);
 
@@ -75,6 +80,7 @@ function Dashboard() {
           });
 
           setColumns(groupedColumns);
+          console.log("Columns actualizado:", groupedColumns);
         } else {
           console.error('Error al actualizar la tarea:', result.message);
         }
@@ -86,12 +92,13 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
+      {console.log("Estado actual de columns:", columns)}
       {Object.entries(columns).map(([columnId, tasks]) => {
-        console.log(`Column ID: ${columnId}`, tasks); // Verifica que columnId no sea undefined
+        console.log(`Column ID: ${columnId}`, tasks);
         return (
           <Column
-            key={columnId}
-            columnId={columnId} // Pasar correctamente columnId
+            key={`column-${columnId}`}
+            columnId={columnId}
             title={columnId}
             tasks={tasks}
             onTaskDrop={handleTaskDrop}
