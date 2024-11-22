@@ -1,5 +1,5 @@
 .column {
-    background-color: #f4f5f7;
+    background-color: #e0f1de;
     border-radius: 8px;
     padding: 16px;
     margin: 8px;
@@ -14,7 +14,7 @@
 .column h2 {
     font-size: 1.2em;
     margin-bottom: 12px;
-    color: #333;
+    color: #c9a0ff;
     text-align: center;
 }
 

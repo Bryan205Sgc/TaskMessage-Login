@@ -1,15 +1,15 @@
 import React from 'react';
-import './Task.css';
+import './Task.css'; // Asegúrate de que los estilos actualizados estén enlazados
 
 function Task({ task, onDragStart }) {
     const handleDragStart = (e) => {
-        e.dataTransfer.setData('taskId', task.id);
+        e.dataTransfer.setData('taskId', task.id); // Ajusta según tu estructura
         onDragStart && onDragStart(task.id);
     };
 
     return (
         <article className="article-wrapper" draggable onDragStart={handleDragStart}>
-            {/* Contenedor del título y descripción */}
+            {/* Contenedor del proyecto */}
             <div className="rounded-lg container-project">
                 <div className="task-content">
                     <h3 className="task-title">{task.title || 'Título no disponible'}</h3>
@@ -17,16 +17,9 @@ function Task({ task, onDragStart }) {
                 </div>
             </div>
             <div className="project-info">
+                {/* Etiquetas de Progresión */}
                 <div className="types">
-                    <span
-                        style={{
-                            backgroundColor: 'rgba(165, 96, 247, 0.43)',
-                            color: 'rgb(85, 27, 177)',
-                        }}
-                        className="project-type"
-                    >
-                        • {task.progresion}
-                    </span>
+                    <span className="project-type">• {task.progresion}</span>
                 </div>
             </div>
         </article>
