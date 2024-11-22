@@ -13,47 +13,51 @@ const App = () => {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const response = await fetch("http://localhost:4000/api/v1/task");
-      const data = await response.json();
-      console.log("Tareas obtenidas del backend:", data);
+      try {
+        const response = await fetch("http://localhost:4000/api/v1/task");
+        const data = await response.json();
+        console.log("Tareas obtenidas del backend:", data);
 
-      const taskMap = {};
-      const columnMap = { todo: [], inProgress: [], done: [] };
+        const taskMap = {};
+        const columnMap = { todo: [], inProgress: [], done: [] };
 
-      data.tasks.forEach((task) => {
-        const id = task._id;
-        taskMap[id] = {
-          id,
-          title: task.nombre,
-          description: task.descripcion,
-          progresion: task.progresion,
-        };
+        data.tasks.forEach((task) => {
+          const id = task._id;
+          taskMap[id] = {
+            id,
+            title: task.nombre,
+            description: task.descripcion,
+            progresion: task.progresion,
+          };
 
-        switch (task.progresion) {
-          case "No Iniciada":
-            columnMap.todo.push(id);
-            break;
-          case "En progreso":
-            columnMap.inProgress.push(id);
-            break;
-          case "Finalizada":
-            columnMap.done.push(id);
-            break;
-          default:
-            break;
-        }
-      });
+          switch (task.progresion) {
+            case "No Iniciada":
+              columnMap.todo.push(id);
+              break;
+            case "En progreso":
+              columnMap.inProgress.push(id);
+              break;
+            case "Finalizada":
+              columnMap.done.push(id);
+              break;
+            default:
+              break;
+          }
+        });
 
-      console.log("Task map:", taskMap);
-      console.log("Column map:", columnMap);
+        console.log("Task map:", taskMap);
+        console.log("Column map:", columnMap);
 
-      setTasks(taskMap);
-      setColumns((prevColumns) => ({
-        ...prevColumns,
-        todo: { ...prevColumns.todo, taskIds: columnMap.todo },
-        inProgress: { ...prevColumns.inProgress, taskIds: columnMap.inProgress },
-        done: { ...prevColumns.done, taskIds: columnMap.done },
-      }));
+        setTasks(taskMap);
+        setColumns((prevColumns) => ({
+          ...prevColumns,
+          todo: { ...prevColumns.todo, taskIds: columnMap.todo },
+          inProgress: { ...prevColumns.inProgress, taskIds: columnMap.inProgress },
+          done: { ...prevColumns.done, taskIds: columnMap.done },
+        }));
+      } catch (error) {
+        console.error("Error al cargar las tareas:", error);
+      }
     };
 
     fetchTasks();
@@ -125,7 +129,7 @@ const App = () => {
     <DndContext onDragEnd={onDragEnd}>
       <div className="App">
         <h1>Task Manager</h1>
-        <div className="board">
+        <div className="board" style={{ display: "flex", gap: "20px", padding: "20px" }}>
           {Object.entries(columns).map(([columnId, column]) => (
             <Column
               key={columnId}
