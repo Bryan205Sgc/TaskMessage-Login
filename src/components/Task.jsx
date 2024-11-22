@@ -8,10 +8,28 @@ function Task({ task, onDragStart }) {
     };
 
     return (
-        <div className="task" draggable onDragStart={handleDragStart}>
-            <h3>{task.title}</h3>
-            <p>{task.description}</p>
-        </div>
+        <article className="article-wrapper" draggable onDragStart={handleDragStart}>
+            {/* Contenedor del título y descripción */}
+            <div className="rounded-lg container-project">
+                <div className="task-content">
+                    <h3 className="task-title">{task.title || 'Título no disponible'}</h3>
+                    <p className="task-description">{task.description || 'Sin descripción'}</p>
+                </div>
+            </div>
+            <div className="project-info">
+                <div className="types">
+                    <span
+                        style={{
+                            backgroundColor: 'rgba(165, 96, 247, 0.43)',
+                            color: 'rgb(85, 27, 177)',
+                        }}
+                        className="project-type"
+                    >
+                        • {task.progresion}
+                    </span>
+                </div>
+            </div>
+        </article>
     );
 }
 
