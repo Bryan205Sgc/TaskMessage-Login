@@ -1,22 +1,18 @@
 import React from 'react';
-import { useDraggable } from '@dnd-kit/core';
+import './Task.css';
 
-function Task({ task }) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-    id: task.id,  // ID único para cada tarea
-  });
+function Task({ task, onDragStart }) {
+    const handleDragStart = (e) => {
+        e.dataTransfer.setData('taskId', task.id);
+        onDragStart && onDragStart(task.id);
+    };
 
-  return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      className={`task ${isDragging ? 'dragging' : ''}`}
-    >
-      <h3>{task.title}</h3>
-      <p>{task.description}</p>
-    </div>
-  );
+    return (
+        <div className="task" draggable onDragStart={handleDragStart}>
+            <h3>{task.title}</h3>
+            <p>{task.description}</p>
+        </div>
+    );
 }
 
 export default Task;
