@@ -6,8 +6,8 @@ const Column = ({ id, column, onDragStart, onDrop }) => {
     <div
       className="column"
       id={id}
-      onDragOver={(e) => e.preventDefault()} // Permitir soltar
-      onDrop={(e) => onDrop(e, id)} // Lógica para soltar tareas
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={(e) => onDrop(e, id)}
     >
       <h2>{column.name}</h2>
       <div className="task-list">
@@ -16,7 +16,7 @@ const Column = ({ id, column, onDragStart, onDrop }) => {
             className="task"
             key={task._id}
             draggable
-            onDragStart={(e) => onDragStart(e, task._id)} // Inicio del arrastre
+            onDragStart={(e) => onDragStart(e, task._id)}
           >
             <strong>{task.nombre}</strong>
             <p>{task.descripcion}</p>
@@ -49,7 +49,7 @@ const Dashboard = () => {
   });
 
   const onDragStart = (e, taskId) => {
-    e.dataTransfer.setData("taskId", taskId); // Transferir el ID de la tarea
+    e.dataTransfer.setData("taskId", taskId);
   };
 
   const onDrop = (e, columnId) => {

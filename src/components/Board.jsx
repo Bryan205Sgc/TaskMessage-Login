@@ -10,7 +10,7 @@ function Board() {
             .then((response) => response.json())
             .then((data) => {
                 console.log('Tareas obtenidas del backend:', data.tasks);
-                setTasks(data.tasks || []); // Asegura que las tareas sean un array
+                setTasks(data.tasks || []);
             })
             .catch((error) => console.error('Error fetching tasks:', error));
     }, []);
@@ -43,7 +43,6 @@ function Board() {
             .then((data) => {
                 console.log('Tarea actualizada:', data);
 
-                // Actualizar el estado local para reflejar el cambio
                 setTasks((prevTasks) =>
                     prevTasks.map((task) =>
                         task.id === taskId ? { ...task, progresion: column } : task

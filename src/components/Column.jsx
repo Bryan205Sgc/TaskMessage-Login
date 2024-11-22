@@ -3,7 +3,6 @@ import './Column.css';
 import Task from './Task';
 
 function Column({ title, tasks, onTaskDrop }) {
-    // Permitir el evento de drop
     const handleDragOver = (e) => {
         e.preventDefault();
     };
