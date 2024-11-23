@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { DndContext } from "@dnd-kit/core";
+import io from "socket.io-client";
 import Column from "./components/Column";
 import "./App.css";
+
+const socket = io("http://localhost:4000"); // Conexión al WebSocket
 
 const App = () => {
   const [tasks, setTasks] = useState({});
@@ -11,6 +14,7 @@ const App = () => {
     done: { title: "Finalizada", taskIds: [] },
   });
 
+  // Cargar tareas desde el servidor y configurar WebSocket
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -61,13 +65,102 @@ const App = () => {
     };
 
     fetchTasks();
+
+    // Configuración de WebSocket
+    socket.on("task-created", (newTask) => {
+      setTasks((prevTasks) => ({
+        ...prevTasks,
+        [newTask._id]: {
+          id: newTask._id,
+          title: newTask.nombre,
+          description: newTask.descripcion,
+          progresion: newTask.progresion,
+        },
+      }));
+
+      setColumns((prevColumns) => {
+        const column = newTask.progresion === "No Iniciada" ? "todo" : newTask.progresion === "En progreso" ? "inProgress" : "done";
+        return {
+          ...prevColumns,
+          [column]: {
+            ...prevColumns[column],
+            taskIds: [...prevColumns[column].taskIds, newTask._id],
+          },
+        };
+      });
+    });
+
+    socket.on("task-updated", (updatedTask) => {
+      setTasks((prevTasks) => ({
+        ...prevTasks,
+        [updatedTask._id]: {
+          ...prevTasks[updatedTask._id],
+          progresion: updatedTask.progresion,
+        },
+      }));
+
+      setColumns((prevColumns) => {
+        const sourceColumn = Object.keys(prevColumns).find((key) =>
+          prevColumns[key].taskIds.includes(updatedTask._id)
+        );
+        const destinationColumn =
+          updatedTask.progresion === "No Iniciada"
+            ? "todo"
+            : updatedTask.progresion === "En progreso"
+            ? "inProgress"
+            : "done";
+
+        if (sourceColumn !== destinationColumn) {
+          const sourceTaskIds = prevColumns[sourceColumn].taskIds.filter(
+            (id) => id !== updatedTask._id
+          );
+          const destinationTaskIds = [
+            ...prevColumns[destinationColumn].taskIds,
+            updatedTask._id,
+          ];
+
+          return {
+            ...prevColumns,
+            [sourceColumn]: { ...prevColumns[sourceColumn], taskIds: sourceTaskIds },
+            [destinationColumn]: {
+              ...prevColumns[destinationColumn],
+              taskIds: destinationTaskIds,
+            },
+          };
+        }
+
+        return prevColumns;
+      });
+    });
+
+    socket.on("task-deleted", (deletedTask) => {
+      setTasks((prevTasks) => {
+        const updatedTasks = { ...prevTasks };
+        delete updatedTasks[deletedTask._id];
+        return updatedTasks;
+      });
+
+      setColumns((prevColumns) => {
+        const updatedColumns = { ...prevColumns };
+        Object.keys(updatedColumns).forEach((key) => {
+          updatedColumns[key].taskIds = updatedColumns[key].taskIds.filter(
+            (id) => id !== deletedTask._id
+          );
+        });
+        return updatedColumns;
+      });
+    });
+
+    return () => {
+      socket.off("task-created");
+      socket.off("task-updated");
+      socket.off("task-deleted");
+    };
   }, []);
 
   const onDragEnd = async (event) => {
     const { active, over } = event;
     if (!over) return;
-
-    console.log(`Tarea arrastrada con id: ${active.id}, Columna destino: ${over.id}`);
 
     const sourceColumn = Object.keys(columns).find((key) =>
       columns[key].taskIds.includes(active.id)
@@ -75,20 +168,12 @@ const App = () => {
     const destinationColumn = over.id;
 
     if (sourceColumn !== destinationColumn) {
-      let newProgression = "";
-      switch (destinationColumn) {
-        case "todo":
-          newProgression = "No Iniciada";
-          break;
-        case "inProgress":
-          newProgression = "En progreso";
-          break;
-        case "done":
-          newProgression = "Finalizada";
-          break;
-        default:
-          break;
-      }
+      const newProgression =
+        destinationColumn === "todo"
+          ? "No Iniciada"
+          : destinationColumn === "inProgress"
+          ? "En progreso"
+          : "Finalizada";
 
       await fetch(`http://localhost:4000/api/v1/task/${active.id}`, {
         method: "PUT",
@@ -117,10 +202,7 @@ const App = () => {
 
       setTasks((prevTasks) => ({
         ...prevTasks,
-        [active.id]: {
-          ...prevTasks[active.id],
-          progresion: newProgression,
-        },
+        [active.id]: { ...prevTasks[active.id], progresion: newProgression },
       }));
     }
   };
