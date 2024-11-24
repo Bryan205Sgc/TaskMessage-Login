@@ -1,29 +1,32 @@
 import React from 'react';
-import './Task.css'; // Asegúrate de que los estilos actualizados estén enlazados
+import { useDrag } from 'react-dnd';
+import '../styles/Task.css';
 
-function Task({ task, onDragStart }) {
-    const handleDragStart = (e) => {
-        e.dataTransfer.setData('taskId', task.id); // Ajusta según tu estructura
-        onDragStart && onDragStart(task.id);
-    };
+const Task = ({ task }) => {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: 'TASK',
+    item: task,
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }));
 
-    return (
-        <article className="article-wrapper" draggable onDragStart={handleDragStart}>
-            {/* Contenedor del proyecto */}
-            <div className="rounded-lg container-project">
-                <div className="task-content">
-                    <h3 className="task-title">{task.title || 'Título no disponible'}</h3>
-                    <p className="task-description">{task.description || 'Sin descripción'}</p>
-                </div>
-            </div>
-            <div className="project-info">
-                {/* Etiquetas de Progresión */}
-                <div className="types">
-                    <span className="project-type">• {task.progresion}</span>
-                </div>
-            </div>
-        </article>
-    );
-}
+  return (
+    <div
+      ref={drag}
+      className="article-wrapper"
+      style={{ opacity: isDragging ? 0.5 : 1 }}
+    >
+      <div className="container-project">
+        <h4 className="task-title">{task.nombre}</h4>
+        <p className="task-description">{task.descripcion}</p>
+      </div>
+      <div className="project-info">
+        <span className="project-type">{task.progresion}</span>
+      </div>
+    </div>
+  );
+};
 
 export default Task;
+

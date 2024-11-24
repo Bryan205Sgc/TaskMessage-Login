@@ -1,28 +1,28 @@
 import React from 'react';
-import './Column.css';
+import { useDrop } from 'react-dnd';
 import Task from './Task';
+import '../styles/Column.css';
 
-function Column({ title, tasks, onTaskDrop }) {
-    const handleDragOver = (e) => {
-        e.preventDefault();
-    };
+const Column = ({ title, tasks, onDrop }) => {
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: 'TASK',
+    drop: (item) => onDrop(item, title),
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
+  }));
 
-    const handleDrop = (e) => {
-        const taskId = e.dataTransfer.getData('taskId');
-        console.log(`Tarea soltada: ${taskId} en columna: ${title}`);
-        onTaskDrop && onTaskDrop(taskId, title);
-    };
-
-    return (
-        <div className="column" onDragOver={handleDragOver} onDrop={handleDrop}>
-            <h2>{title}</h2>
-            <div className="task-list">
-                {tasks.map((task) => (
-                    <Task key={task.id} task={task} />
-                ))}
-            </div>
-        </div>
-    );
-}
+  return (
+    <div
+      ref={drop}
+      className={`column ${isOver ? 'column-over' : ''}`}
+    >
+      <h3>{title}</h3>
+      {tasks.map((task) => (
+        <Task key={task._id} task={task} />
+      ))}
+    </div>
+  );
+};
 
 export default Column;

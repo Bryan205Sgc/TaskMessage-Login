@@ -1,0 +1,84 @@
+.task-board-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra el tablero en la página */
+    padding: 20px;
+  }
+  
+  .task-board {
+    display: flex;
+    gap: 40px; /* Más espacio entre columnas */
+    padding: 20px;
+    max-width: 90%; /* Ampliar el espacio total disponible para las columnas */
+    justify-content: center; /* Centrar las columnas */
+  }
+  
+  .column {
+    flex: 1;
+    max-width: 300px; /* Aumentar el ancho máximo de las columnas */
+    min-width: 300px; /* Aumentar el ancho mínimo de las columnas */
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .column h3 {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    color: #333;
+  }
+  
+  .task {
+    margin: 15px auto; /* Centrar cada tarea dentro de la columna */
+    width: 90%; /* Asegura que las tareas no se expandan más allá del contenedor */
+  }
+  
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+  
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    max-height: 80%;
+    overflow-y: auto;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+  
+.cancelled-tasks-btn {
+    background: #ff6347;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+  
+.cancelled-tasks-btn:hover {
+    background: #ff4532;
+}
+  
+.task.cancelled-task {
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+}
+  
