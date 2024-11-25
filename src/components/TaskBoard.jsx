@@ -62,16 +62,16 @@ const TaskBoard = () => {
     let updateTaskFn;
 
     switch (newStatus) {
-      case 'No iniciada':
+      case 'No iniciado':
         updateTaskFn = updateTaskToToDo;
         break;
       case 'En proceso':
         updateTaskFn = updateTaskToInProgress;
         break;
-      case 'Finalizada':
+      case 'Finalizado':
         updateTaskFn = updateTaskToFinished;
         break;
-      case 'Cancelada':
+      case 'Cancelado':
         updateTaskFn = updateTaskToCancelled;
         break;
       default:
@@ -119,9 +119,9 @@ const TaskBoard = () => {
       </button>
       <div className="task-board">
         <Column
-          title="No iniciada"
-          tasks={tasksByStatus('No iniciada')}
-          onDrop={(taskId) => handleUpdateTask(taskId, 'No iniciada')}
+          title="No iniciado"
+          tasks={tasksByStatus('No iniciado')}
+          onDrop={(taskId) => handleUpdateTask(taskId, 'No iniciado')}
         />
         <Column
           title="En proceso"
@@ -129,9 +129,9 @@ const TaskBoard = () => {
           onDrop={(taskId) => handleUpdateTask(taskId, 'En proceso')}
         />
         <Column
-          title="Finalizada"
-          tasks={tasksByStatus('Finalizada')}
-          onDrop={(taskId) => handleUpdateTask(taskId, 'Finalizada')}
+          title="Finalizado"
+          tasks={tasksByStatus('Finalizado')}
+          onDrop={(taskId) => handleUpdateTask(taskId, 'Finalizado')}
         />
       </div>
       <CreateTaskModal
@@ -142,8 +142,8 @@ const TaskBoard = () => {
       <CancelledTasksModal
         isOpen={isCancelledModalOpen}
         onClose={() => setCancelledModalOpen(false)}
-        tasks={tasksByStatus('Cancelada')}
-        onRestore={(taskId) => handleUpdateTask(taskId, 'No iniciada')}
+        tasks={tasksByStatus('Cancelado')}
+        onRestore={(taskId) => handleUpdateTask(taskId, 'No iniciado')}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 export const COLUMN_TYPES = {
-  TODO: 'No iniciada',
+  TODO: 'No iniciado',
   IN_PROGRESS: 'En proceso',
-  CANCELLED: 'Cancelada',
-  DONE: 'Finalizada',
+  CANCELLED: 'Cancelado',
+  DONE: 'Finalizado',
 };
