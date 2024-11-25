@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Column from './Column';
 import CreateTaskModal from './CreateTaskModal';
 import CancelledTasksModal from './CancelledTasksModal';
+import BackgroundSelector from './BackgroundSelector';
 import {
   fetchTasks,
   createTask,
@@ -17,6 +18,11 @@ const TaskBoard = () => {
   const [tasks, setTasks] = useState([]);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isCancelledModalOpen, setCancelledModalOpen] = useState(false);
+  const [background, setBackground] = useState({
+    color: '#000000',
+    url: '',
+    isLight: false,
+  });
 
   useEffect(() => {
     // Fetch initial tasks
@@ -87,7 +93,18 @@ const TaskBoard = () => {
   };
 
   return (
-    <div className="task-board-container">
+    <div
+      className={`task-board-container ${
+        background.isLight ? 'background-light' : ''
+      }`}
+      style={{
+        backgroundImage: background.url ? `url(${background.url})` : 'none',
+        backgroundColor: background.color || 'transparent',
+        backgroundSize: 'cover',
+        backgroundAttachment: 'fixed',
+      }}
+    >
+      <BackgroundSelector onBackgroundChange={setBackground} />
       <button
         className="create-task-btn"
         onClick={() => setCreateModalOpen(true)}
@@ -126,7 +143,7 @@ const TaskBoard = () => {
         isOpen={isCancelledModalOpen}
         onClose={() => setCancelledModalOpen(false)}
         tasks={tasksByStatus('Cancelada')}
-        onRestore={(taskId) => handleUpdateTask(taskId, 'No Iniciada')}
+        onRestore={(taskId) => handleUpdateTask(taskId, 'No iniciada')}
       />
     </div>
   );

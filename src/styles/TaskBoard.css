@@ -69,3 +69,76 @@
   border-radius: 4px;
   color: #ffffff;
 }
+
+.taskboard-container {
+  min-height: 100vh;
+  padding: 20px;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  transition: background 0.3s ease;
+}
+
+.columns-container {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+}
+
+.task-board-container {
+  background-size: cover; /* Escalar imagen para cubrir */
+  background-attachment: fixed; /* Mantener fija la imagen */
+  background-position: center; /* Centrar la imagen */
+}
+
+.background-light .task-board-container,
+.background-light .create-task-btn,
+.background-light .cancelled-tasks-btn {
+  color: black; /* Cambiar texto a negro para fondos claros */
+}
+
+.background-light .column h3 {
+  color: black; /* Cambiar el color del título de columna */
+}
+
+.background-light .task-title,
+.background-light .task-description,
+.background-light .project-type {
+  color: black; /* Cambiar el color del contenido de la tarea */
+}
+
+/* Botones principales */
+.create-task-btn,
+.cancelled-tasks-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  margin: 10px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.create-task-btn {
+  background-color: #ff6f61; /* Rojo coral */
+  color: #ffffff; /* Texto blanco por defecto */
+}
+
+.create-task-btn:hover {
+  background-color: #ff4b3e; /* Rojo más oscuro en hover */
+}
+
+.cancelled-tasks-btn {
+  background-color: #4e458d; /* Púrpura */
+  color: #ffffff; /* Texto blanco por defecto */
+}
+
+.cancelled-tasks-btn:hover {
+  background-color: #3c346b; /* Púrpura más oscuro en hover */
+}
+
+/* Ajuste dinámico según el fondo */
+.task-board-container.background-light .create-task-btn,
+.task-board-container.background-light .cancelled-tasks-btn {
+  color: #000000; /* Texto negro si el fondo es claro */
+}

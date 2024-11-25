@@ -1,37 +1,38 @@
-/* Estilos generales de las columnas */
 .column {
+    flex: 1;
     padding: 20px;
-    background: #1e1e1e; /* Fondo oscuro */
-    border: 4px solid #333; /* Borde oscuro */
-    border-radius: 10px; /* Bordes redondeados */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.4); /* Sombra tenue */
-    transition: all 0.3s ease;
+    margin: 10px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
+    backdrop-filter: blur(10px); /* Efecto de desenfoque */
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1); /* Sombra clara */
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    min-height: 300px; /* Altura mínima para uniformidad */
-    min-width: 280px; /* Ancho mínimo para evitar columnas muy angostas */
-    flex: 1; /* Permite que todas las columnas ocupen el mismo espacio disponible */
-    margin: 0 10px; /* Separación horizontal entre columnas */
+    align-items: center; /* Centrar horizontalmente */
 }
 
-/* Cambiar color al pasar el mouse */
 .column-hover {
-    border-color: #4ae800; /* Color verde al pasar el mouse */
-    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.6); /* Incrementar la sombra */
+    background: rgba(255, 255, 255, 0.2); /* Fondo más claro al pasar el mouse */
+    border-color: #4ae800; /* Color verde */
+    box-shadow: 0px 6px 12px rgba(255, 255, 255, 0.3); /* Sombra más intensa */
 }
 
-/* Título de la columna */
 .column h3 {
-    color: #ffffff; /* Texto blanco */
-    font-size: 1.4em;
-    margin-bottom: 15px;
     text-align: center;
-    text-transform: uppercase;
+    color: #ffffff; /* Color visible para texto en fondos oscuros */
+    font-size: 1.5em;
+    margin-bottom: 15px;
 }
 
+.task {
+    margin-bottom: 15px; /* Espaciado entre tareas */
+    width: 90%; /* Asegura que las tareas no sean demasiado anchas */
+    max-width: 400px; /* Ajuste para pantallas grandes */
+}
 
-/* Espaciado entre tareas */
-.column .task {
-    margin-bottom: 15px;
+.task-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar tareas dentro de las columnas */
 }

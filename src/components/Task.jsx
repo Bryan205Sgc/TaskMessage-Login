@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDrag } from 'react-dnd';
 import '../styles/Task.css';
 
@@ -12,22 +12,11 @@ const Task = ({ task, onEdit, onDelete, onCancel }) => {
   }));
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef(null);
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  const toggleMenu = (event) => {
+    event.preventDefault(); // Evitar menú contextual predeterminado
+    setMenuOpen(!menuOpen);
+  };
 
   return (
     <div
@@ -42,8 +31,7 @@ const Task = ({ task, onEdit, onDelete, onCancel }) => {
       <div className="project-info">
         <span className="project-type">{task.progresion}</span>
       </div>
-
-      <div className="task-menu" ref={menuRef}>
+      <div className="task-menu">
         <button className="menu-toggle" onClick={toggleMenu}>
           ⋮
         </button>
