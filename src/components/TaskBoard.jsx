@@ -1,116 +1,133 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Column from './Column';
-import { COLUMN_TYPES } from '../utils/constants';
-import { fetchTasks, updateTaskToInProgress, updateTaskToToDo, updateTaskToFinished } from '../utils/api';
+import CreateTaskModal from './CreateTaskModal';
+import CancelledTasksModal from './CancelledTasksModal';
+import {
+  fetchTasks,
+  createTask,
+  updateTaskToToDo,
+  updateTaskToInProgress,
+  updateTaskToFinished,
+  updateTaskToCancelled,
+} from '../utils/api';
 import { socket } from '../sockets/socket';
 import '../styles/TaskBoard.css';
 
 const TaskBoard = () => {
   const [tasks, setTasks] = useState([]);
-  const [showCancelledTasks, setShowCancelledTasks] = useState(false);
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const [isCancelledModalOpen, setCancelledModalOpen] = useState(false);
 
-  // Obtener tareas del backend al cargar el componente
   useEffect(() => {
+    // Fetch initial tasks
     fetchTasks()
-      .then((res) => {
-        console.log('Tareas obtenidas del backend:', res.data.tasks);
-        setTasks(res.data.tasks);
-      })
-      .catch((err) => {
-        console.error('Error al obtener las tareas:', err);
-      });
+      .then((res) => setTasks(res.data.tasks))
+      .catch((err) => console.error('Error al obtener las tareas:', err));
 
-    // Configurar sockets
+    // WebSocket: Escucha los cambios en las tareas
     socket.on('task-updated', (updatedTask) => {
-      setTasks((prev) =>
-        prev.map((task) => (task._id === updatedTask._id ? updatedTask : task))
-      );
+      setTasks((prevTasks) => {
+        const taskExists = prevTasks.find((task) => task._id === updatedTask._id);
+        if (taskExists) {
+          // Actualiza la tarea existente
+          return prevTasks.map((task) =>
+            task._id === updatedTask._id ? updatedTask : task
+          );
+        } else {
+          // Añade la nueva tarea si no existe
+          return [...prevTasks, updatedTask];
+        }
+      });
     });
 
-    socket.on('task-deleted', (deletedTask) => {
-      setTasks((prev) => prev.filter((task) => task._id !== deletedTask._id));
-    });
-
+    // Limpia el evento al desmontar el componente
     return () => {
       socket.off('task-updated');
-      socket.off('task-deleted');
     };
   }, []);
 
-  // Manejar el cambio de columna
-  const handleDrop = (task, newStatus) => {
-    console.log(`Moviendo tarea: ${task._id} a estado: ${newStatus}`);
-
-    let updateTaskStatus;
-
-    if (newStatus === COLUMN_TYPES.IN_PROGRESS) {
-      updateTaskStatus = updateTaskToInProgress;
-    } else if (newStatus === COLUMN_TYPES.TODO) {
-      updateTaskStatus = updateTaskToToDo;
-    } else if (newStatus === COLUMN_TYPES.DONE) {
-      updateTaskStatus = updateTaskToFinished;
-    } else {
-      console.error('Estado desconocido o no manejado:', newStatus);
-      return;
-    }
-
-    updateTaskStatus(task._id)
-      .then((res) => {
-        console.log('Tarea actualizada en el backend:', res.data);
-        setTasks((prev) =>
-          prev.map((t) => (t._id === task._id ? res.data : t))
-        );
-      })
-      .catch((err) => {
-        console.error('Error al actualizar el estado de la tarea:', err);
-      });
+  const handleCreateTask = (newTask) => {
+    createTask(newTask)
+      .then((res) => setTasks((prev) => [...prev, res.data.task]))
+      .catch((err) => console.error('Error al crear la tarea:', err));
   };
 
-  // Filtrar tareas canceladas
-  const cancelledTasks = tasks.filter((task) => task.progresion === COLUMN_TYPES.CANCELLED);
+  const handleUpdateTask = (taskId, newStatus) => {
+    let updateTaskFn;
 
-  // Función para abrir/cerrar el modal de tareas canceladas
-  const toggleCancelledTasksModal = () => {
-    setShowCancelledTasks(!showCancelledTasks);
+    switch (newStatus) {
+      case 'No iniciada':
+        updateTaskFn = updateTaskToToDo;
+        break;
+      case 'En proceso':
+        updateTaskFn = updateTaskToInProgress;
+        break;
+      case 'Finalizada':
+        updateTaskFn = updateTaskToFinished;
+        break;
+      case 'Cancelada':
+        updateTaskFn = updateTaskToCancelled;
+        break;
+      default:
+        console.error('Estado desconocido:', newStatus);
+        return;
+    }
+
+    updateTaskFn(taskId)
+      .then((res) => {
+        setTasks((prev) =>
+          prev.map((task) => (task._id === taskId ? res.data : task))
+        );
+      })
+      .catch((err) => console.error('Error al actualizar la tarea:', err));
+  };
+
+  const tasksByStatus = (status) => {
+    return tasks.filter((task) => task.progresion === status);
   };
 
   return (
     <div className="task-board-container">
-      <button onClick={toggleCancelledTasksModal} className="cancelled-tasks-btn">
+      <button
+        className="create-task-btn"
+        onClick={() => setCreateModalOpen(true)}
+      >
+        Crear Tarea
+      </button>
+      <button
+        className="cancelled-tasks-btn"
+        onClick={() => setCancelledModalOpen(true)}
+      >
         Ver tareas canceladas
       </button>
-
       <div className="task-board">
-        {Object.values(COLUMN_TYPES)
-          .filter((status) => status !== COLUMN_TYPES.CANCELLED) // Excluye la columna "Cancelada"
-          .map((status) => (
-            <Column
-              key={status}
-              title={status}
-              tasks={tasks.filter((task) => task.progresion === status)}
-              onDrop={handleDrop}
-            />
-          ))}
+        <Column
+          title="No iniciada"
+          tasks={tasksByStatus('No iniciada')}
+          onDrop={(taskId) => handleUpdateTask(taskId, 'No iniciada')}
+        />
+        <Column
+          title="En proceso"
+          tasks={tasksByStatus('En proceso')}
+          onDrop={(taskId) => handleUpdateTask(taskId, 'En proceso')}
+        />
+        <Column
+          title="Finalizada"
+          tasks={tasksByStatus('Finalizada')}
+          onDrop={(taskId) => handleUpdateTask(taskId, 'Finalizada')}
+        />
       </div>
-
-      {showCancelledTasks && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Tareas Canceladas</h3>
-            {cancelledTasks.length > 0 ? (
-              cancelledTasks.map((task) => (
-                <div key={task._id} className="task cancelled-task">
-                  <h4>{task.nombre}</h4>
-                  <p>{task.descripcion}</p>
-                </div>
-              ))
-            ) : (
-              <p>No hay tareas canceladas.</p>
-            )}
-            <button onClick={toggleCancelledTasksModal}>Cerrar</button>
-          </div>
-        </div>
-      )}
+      <CreateTaskModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        onCreate={handleCreateTask}
+      />
+      <CancelledTasksModal
+        isOpen={isCancelledModalOpen}
+        onClose={() => setCancelledModalOpen(false)}
+        tasks={tasksByStatus('Cancelada')}
+        onRestore={(taskId) => handleUpdateTask(taskId, 'No Iniciada')}
+      />
     </div>
   );
 };

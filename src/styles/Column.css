@@ -1,12 +1,37 @@
+/* Estilos generales de las columnas */
 .column {
-    flex: 1;
-    padding: 16px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    min-height: 300px;
+    padding: 20px;
+    background: #1e1e1e; /* Fondo oscuro */
+    border: 4px solid #333; /* Borde oscuro */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.4); /* Sombra tenue */
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 300px; /* Altura mínima para uniformidad */
+    min-width: 280px; /* Ancho mínimo para evitar columnas muy angostas */
+    flex: 1; /* Permite que todas las columnas ocupen el mismo espacio disponible */
+    margin: 0 10px; /* Separación horizontal entre columnas */
 }
-  
-.column-over {
-    background-color: #e0ffe0;
+
+/* Cambiar color al pasar el mouse */
+.column-hover {
+    border-color: #4ae800; /* Color verde al pasar el mouse */
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.6); /* Incrementar la sombra */
 }
-  
+
+/* Título de la columna */
+.column h3 {
+    color: #ffffff; /* Texto blanco */
+    font-size: 1.4em;
+    margin-bottom: 15px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+
+/* Espaciado entre tareas */
+.column .task {
+    margin-bottom: 15px;
+}

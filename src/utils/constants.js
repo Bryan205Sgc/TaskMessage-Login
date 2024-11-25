@@ -1,5 +1,5 @@
 export const COLUMN_TYPES = {
-  TODO: 'No Iniciada',
+  TODO: 'No iniciada',
   IN_PROGRESS: 'En proceso',
   CANCELLED: 'Cancelada',
   DONE: 'Finalizada',

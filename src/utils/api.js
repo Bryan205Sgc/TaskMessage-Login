@@ -15,3 +15,15 @@ export const updateTaskToCancelled = (id) =>
 
 export const updateTaskToFinished = (id) =>
   axios.put(`${BASE_URL}/updateStatusFinished`, { id });
+
+export const deleteTask = (id) =>
+  axios.delete(`${BASE_URL}/delete/${id}`);
+
+export const updateTask = (id, data) =>
+  axios.put(`${BASE_URL}/update/${id}`, data);
+
+export const cancelTask = (id) =>
+  axios.put(`${BASE_URL}/update/${id}`, { progresion: 'Cancelada' });
+
+export const createTask = (taskData) => {
+  return axios.post(`${BASE_URL}/add`, taskData);};

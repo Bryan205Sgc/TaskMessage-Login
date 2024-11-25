@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useDrag } from 'react-dnd';
 import '../styles/Task.css';
 
-const Task = ({ task }) => {
+const Task = ({ task, onEdit, onDelete, onCancel }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'TASK',
     item: task,
@@ -10,6 +10,24 @@ const Task = ({ task }) => {
       isDragging: !!monitor.isDragging(),
     }),
   }));
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div
@@ -24,9 +42,21 @@ const Task = ({ task }) => {
       <div className="project-info">
         <span className="project-type">{task.progresion}</span>
       </div>
+
+      <div className="task-menu" ref={menuRef}>
+        <button className="menu-toggle" onClick={toggleMenu}>
+          ⋮
+        </button>
+        {menuOpen && (
+          <div className="menu-dropdown">
+            <button onClick={() => onEdit(task)}>Editar</button>
+            <button onClick={() => onDelete(task._id)}>Eliminar</button>
+            <button onClick={() => onCancel(task._id)}>Cancelar</button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
 export default Task;
-
