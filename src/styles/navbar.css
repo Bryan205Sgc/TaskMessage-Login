@@ -1,0 +1,6 @@
+.divBar{
+    background-color: rgb(142, 241, 208);
+    max-height: 3%;
+    display: flex;
+    justify-content: center;
+}

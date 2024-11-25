@@ -19,8 +19,8 @@ const TaskBoard = () => {
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isCancelledModalOpen, setCancelledModalOpen] = useState(false);
   const [background, setBackground] = useState({
-    color: '#000000',
-    url: '',
+    color: '',
+    url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732504320/ufo9ylxhpfylpxis4oyu.jpg',
     isLight: false,
   });
 

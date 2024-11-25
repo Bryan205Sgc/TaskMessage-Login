@@ -3,10 +3,10 @@ import '../styles/BackgroundSelector.css';
 
 const BACKGROUNDS = [
   { name: 'Aurora', url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732504320/ufo9ylxhpfylpxis4oyu.jpg' },
-  { name: 'Montaña Niebla', url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732504322/bp1eh0tdsftnjolauxfd.jpg' },
+  { name: 'Montaña Niebla', url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732561558/qt3993rfxrftmejlmitf.jpg' },
   { name: 'Lago Reflejo', url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732504320/dzrmk1nbamuvnrlrzkjq.jpg' },
-  { name: 'Puente Otoño', url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732504321/zsk6vf0i5hjnvlzq3vbw.jpg' },
-  { name: 'Acantilado Bosque', url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732504322/eelg54rrb9qoowilzks4.jpg' },
+  { name: 'Cielo Nocturno', url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732561044/pqyyelvqbu4vtbbe8svq.jpg' },
+  { name: 'Playa Rocosa', url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732561368/a2hecjesr0efnjkedisf.jpg' },
   { name: 'Blanco', color: '#ffffff', isLight: true },
   { name: 'Negro', color: '#000000', isLight: false },
   { name: 'Púrpura', color: '#4e458d', isLight: false },
