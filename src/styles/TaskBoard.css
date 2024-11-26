@@ -70,12 +70,18 @@
   color: #ffffff;
 }
 
-.taskboard-container {
-  min-height: 100vh;
-  padding: 20px;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  transition: background 0.3s ease;
+.task-board-container {
+  width: 100%;
+  height: 100vh; /* Asegurar que el fondo cubre toda la altura de la pantalla */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Evitar desbordamientos */
+  transition: background 0.5s ease, background-size 0.5s ease; /* Animación suave */
+}
+
+.task-board-container {
+  position: relative; /* Necesario para clip-path */
+  clip-path: inset(0); /* Recorta todo lo que desborde del contenedor */
 }
 
 .columns-container {
@@ -85,10 +91,14 @@
 }
 
 .task-board-container {
-  background-size: cover; /* Escalar imagen para cubrir */
-  background-attachment: fixed; /* Mantener fija la imagen */
-  background-position: center; /* Centrar la imagen */
+  width: 100%;
+  min-height: 100vh; /* Asegura que siempre cubre toda la pantalla */
+  display: flex;
+  flex-direction: column;
+  transition: background 0.5s ease, background-size 0.5s ease; /* Animación suave */
 }
+
+
 
 .background-light .task-board-container,
 .background-light .create-task-btn,
@@ -120,16 +130,16 @@
 }
 
 .create-task-btn {
-  background-color: #ff6f61; /* Rojo coral */
+  background-color: #ff4b3e; /* Rojo coral */
   color: #ffffff; /* Texto blanco por defecto */
 }
 
 .create-task-btn:hover {
-  background-color: #ff4b3e; /* Rojo más oscuro en hover */
+  background-color: #a73028; /* Rojo más oscuro en hover */
 }
 
 .cancelled-tasks-btn {
-  background-color: #4e458d; /* Púrpura */
+  background-color: #4123ff; /* Púrpura */
   color: #ffffff; /* Texto blanco por defecto */
 }
 
@@ -141,4 +151,9 @@
 .task-board-container.background-light .create-task-btn,
 .task-board-container.background-light .cancelled-tasks-btn {
   color: #000000; /* Texto negro si el fondo es claro */
+}
+
+.task-board-container .create-task-btn,
+.task-board-container .cancelled-tasks-btn {
+  color: #ffffff; /* Texto negro si el fondo es claro */
 }

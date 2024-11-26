@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Column from './Column';
 import CreateTaskModal from './CreateTaskModal';
@@ -95,17 +94,26 @@ const TaskBoard = () => {
 
   return (
     <div
-      className={`task-board-container ${
-        background.isLight ? 'background-light' : ''
-      }`}
+      key={background.url || background.gradient || background.color} // Clave única para forzar redibujo
+      className="task-board-container"
       style={{
-        backgroundImage: background.url ? `url(${background.url})` : 'none',
-        backgroundColor: background.color || 'transparent',
-        backgroundSize: 'cover',
-        backgroundAttachment: 'fixed',
+        background: background.url
+          ? `url(${background.url})`
+          : background.gradient
+          ? background.gradient
+          : background.color || 'transparent',
+        backgroundSize: 'cover', // Asegurar que el fondo cubre el contenedor
+        backgroundRepeat: 'no-repeat', // Evitar repeticiones
+        backgroundPosition: 'center', // Centrar la imagen
+        height: '100vh', // Asegurar altura completa de la pantalla
+        overflow: 'hidden', // Evitar desbordamientos
       }}
     >
-      <BackgroundSelector onBackgroundChange={setBackground} />
+      <BackgroundSelector
+        onBackgroundChange={setBackground}
+        selectedBackground={background}
+      />
+
       <button
         className="create-task-btn"
         onClick={() => setCreateModalOpen(true)}
@@ -151,4 +159,3 @@ const TaskBoard = () => {
 };
 
 export default TaskBoard;
-

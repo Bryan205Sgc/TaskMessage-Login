@@ -7,43 +7,53 @@ const BACKGROUNDS = [
   { name: 'Lago Reflejo', url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732504320/dzrmk1nbamuvnrlrzkjq.jpg' },
   { name: 'Cielo Nocturno', url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732561044/pqyyelvqbu4vtbbe8svq.jpg' },
   { name: 'Playa Rocosa', url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732561368/a2hecjesr0efnjkedisf.jpg' },
-  { name: 'Blanco', color: '#ffffff', isLight: true },
-  { name: 'Negro', color: '#000000', isLight: false },
-  { name: 'Púrpura', color: '#4e458d', isLight: false },
-  { name: 'Verde', color: '#609f14', isLight: true },
-  { name: 'Magenta', color: '#c112b6', isLight: false },
+  { name: 'Blanco', gradient: 'linear-gradient(to right, #ffffff, #eaeaea)', isLight: true },
+  { name: 'Negro', gradient: 'linear-gradient(to right, #000000, #434343)', isLight: false },
+  { name: 'Púrpura', gradient: 'linear-gradient(to right, #4e458d, #8a77ff)', isLight: false },
+  { name: 'Verde', gradient: 'linear-gradient(to right, #609f14, #a0d36c)', isLight: true },
+  { name: 'Magenta', gradient: 'linear-gradient(to right, #c112b6, #f05be6)', isLight: false },
 ];
 
-const BackgroundSelector = ({ onBackgroundChange }) => {
+const BackgroundSelector = ({ onBackgroundChange, selectedBackground }) => {
   const handleBackgroundChange = (background) => {
+    if (
+      selectedBackground &&
+      selectedBackground.url === background.url &&
+      selectedBackground.gradient === background.gradient &&
+      selectedBackground.color === background.color
+    ) {
+      return;
+    }
+
     onBackgroundChange({
       url: background.url || '',
-      color: background.color || '',
-      isLight: background.isLight,
+      gradient: background.gradient || '',
+      color: background.color || 'transparent',
+      isLight: background.isLight || false,
     });
   };
 
   return (
     <div className="background-selector-container">
-        {BACKGROUNDS.map((bg, index) => (
-            <button
-            key={index}
-            className={`background-button ${bg.isLight ? 'light' : 'dark'}`}
-            style={{
-                backgroundColor: bg.color || 'transparent',
-                backgroundImage: bg.url ? `url(${bg.url})` : 'none',
-            }}
-            onClick={() => onBackgroundChange(bg)}
-            >
-            {bg.url ? (
-                <img src={bg.url} alt={bg.name} />
-            ) : (
-                <span>{bg.name}</span>
-            )}
-            </button>
-    ))}
+      {BACKGROUNDS.map((bg, index) => (
+        <button
+          key={index}
+          className={`background-button ${selectedBackground?.name === bg.name ? 'selected' : ''}`}
+          style={{
+            background: bg.url
+              ? `url(${bg.url})`
+              : bg.gradient
+              ? bg.gradient
+              : bg.color || 'transparent',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+          onClick={() => handleBackgroundChange(bg)}
+        >
+          {!bg.url && !bg.gradient && <span>{bg.name}</span>}
+        </button>
+      ))}
     </div>
-
   );
 };
 
