@@ -7,7 +7,7 @@ const BACKGROUNDS = [
   { name: 'Lago Reflejo', url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732504320/dzrmk1nbamuvnrlrzkjq.jpg' },
   { name: 'Cielo Nocturno', url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732561044/pqyyelvqbu4vtbbe8svq.jpg' },
   { name: 'Playa Rocosa', url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732561368/a2hecjesr0efnjkedisf.jpg' },
-  { name: 'Blanco', gradient: 'linear-gradient(to right, #ffffff, #eaeaea)', isLight: true },
+  { name: 'Blanco', gradient: 'linear-gradient(to right, #dadada, #9a9a9a)', isLight: true },
   { name: 'Negro', gradient: 'linear-gradient(to right, #000000, #434343)', isLight: false },
   { name: 'Púrpura', gradient: 'linear-gradient(to right, #4e458d, #8a77ff)', isLight: false },
   { name: 'Verde', gradient: 'linear-gradient(to right, #609f14, #a0d36c)', isLight: true },
