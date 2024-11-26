@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import * as jwt_decode from 'jwt-decode';
 
-
-
 import PrivateRoutes from './PrivateRoot';
-
 import Login from '../components/Login';
-import TaskBoard from '../components/TaskBoard';
+import TaskBoard from '../components/HomePage';
 
 export default function Root() {
   const [userRole, setUserRole] = useState(null); 
@@ -18,7 +17,7 @@ export default function Root() {
     if (token) {
       try {
         const decoded = jwt_decode(token);
-        setUserRole(decoded.rol);  // Asigna el rol desde el token
+        setUserRole(decoded.rol); // Asigna el rol desde el token
       } catch (error) {
         console.error("Token inválido o expirado", error);
       }
@@ -32,18 +31,20 @@ export default function Root() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path='/login' element={<Login />} />
-        <Route path='/home' element={<TaskBoard />} />
+      <DndProvider backend={HTML5Backend}>
+        <Routes>
+          <Route path='/login' element={<Login />} />
+          <Route path='/home' element={<TaskBoard />} />
 
-        {
-          userRole === 'Administrador App'
-            ? <Route path='/' element={<PrivateRoutes />} />
-            : <Route path='/' element={<Navigate to='/login' replace />} />
-        }
+          {
+            userRole === 'Administrador App'
+              ? <Route path='/' element={<PrivateRoutes />} />
+              : <Route path='/' element={<Navigate to='/login' replace />} />
+          }
 
-        <Route path='*' element={<Navigate to='/login' replace />} />
-      </Routes>
+          <Route path='*' element={<Navigate to='/login' replace />} />
+        </Routes>
+      </DndProvider>
     </BrowserRouter>
   );
 }
