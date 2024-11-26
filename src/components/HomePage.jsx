@@ -14,7 +14,6 @@ import {
 } from '../utils/api';
 import { socket } from '../sockets/socket';
 import '../styles/TaskBoard.css';
-import NavBar from './Navbar';
 
 const TaskBoard = () => {
   const [tasks, setTasks] = useState([]);
