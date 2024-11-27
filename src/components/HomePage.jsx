@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Column from './Column';
 import CreateTaskModal from './CreateTaskModal';
 import CancelledTasksModal from './CancelledTasksModal';
+import EditTaskModal from './EditTaskModal';
 import BackgroundSelector from './BackgroundSelector';
 import {
   fetchTasks,
@@ -10,6 +11,7 @@ import {
   updateTaskToInProgress,
   updateTaskToFinished,
   updateTaskToCancelled,
+  updateTask,
 } from '../utils/api';
 import { socket } from '../sockets/socket';
 import '../styles/TaskBoard.css';
@@ -18,6 +20,8 @@ const TaskBoard = () => {
   const [tasks, setTasks] = useState([]);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isCancelledModalOpen, setCancelledModalOpen] = useState(false);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState(null);
   const [background, setBackground] = useState({
     color: '',
     url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732504320/ufo9ylxhpfylpxis4oyu.jpg',
@@ -25,28 +29,16 @@ const TaskBoard = () => {
   });
 
   useEffect(() => {
-    // Fetch initial tasks
     fetchTasks()
       .then((res) => setTasks(res.data.tasks))
       .catch((err) => console.error('Error al obtener las tareas:', err));
 
-    // WebSocket: Escucha los cambios en las tareas
     socket.on('task-updated', (updatedTask) => {
-      setTasks((prevTasks) => {
-        const taskExists = prevTasks.find((task) => task._id === updatedTask._id);
-        if (taskExists) {
-          // Actualiza la tarea existente
-          return prevTasks.map((task) =>
-            task._id === updatedTask._id ? updatedTask : task
-          );
-        } else {
-          // Añade la nueva tarea si no existe
-          return [...prevTasks, updatedTask];
-        }
-      });
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (task._id === updatedTask._id ? updatedTask : task))
+      );
     });
 
-    // Limpia el evento al desmontar el componente
     return () => {
       socket.off('task-updated');
     };
@@ -59,33 +51,56 @@ const TaskBoard = () => {
   };
 
   const handleUpdateTask = (taskId, newStatus) => {
-    let updateTaskFn;
+    const updateTaskFn = {
+      'No iniciado': updateTaskToToDo,
+      'En proceso': updateTaskToInProgress,
+      'Finalizado': updateTaskToFinished,
+      'Cancelado': updateTaskToCancelled,
+    }[newStatus];
 
-    switch (newStatus) {
-      case 'No iniciado':
-        updateTaskFn = updateTaskToToDo;
-        break;
-      case 'En proceso':
-        updateTaskFn = updateTaskToInProgress;
-        break;
-      case 'Finalizado':
-        updateTaskFn = updateTaskToFinished;
-        break;
-      case 'Cancelado':
-        updateTaskFn = updateTaskToCancelled;
-        break;
-      default:
-        console.error('Estado desconocido:', newStatus);
-        return;
+    if (updateTaskFn) {
+      updateTaskFn(taskId)
+        .then((res) => {
+          const updatedTask = res.data;
+          setTasks((prev) =>
+            prev.map((task) => (task._id === updatedTask._id ? updatedTask : task))
+          );
+        })
+        .catch((err) => console.error('Error al actualizar la tarea:', err));
     }
+  };
 
-    updateTaskFn(taskId)
+  const handleEditTask = (taskId, updatedData) => {
+    const { nombre, descripcion, fechaFinalizacion, DepartmentId } = updatedData;
+
+    const formattedFechaFinalizacion = new Date(fechaFinalizacion)
+      .toISOString()
+      .split('T')[0];
+
+    updateTask(taskId, {
+      nombre,
+      descripcion,
+      fechaFinalizacion: formattedFechaFinalizacion,
+      DepartmentId,
+    })
       .then((res) => {
-        setTasks((prev) =>
-          prev.map((task) => (task._id === taskId ? res.data : task))
+        const updatedTask = res.data.task;
+        setTasks((prevTasks) =>
+          prevTasks.map((task) => (task._id === updatedTask._id ? updatedTask : task))
         );
+        socket.emit('task-updated', updatedTask);
+        setEditModalOpen(false);
       })
-      .catch((err) => console.error('Error al actualizar la tarea:', err));
+      .catch((err) => console.error('Error al editar la tarea:', err));
+  };
+
+  const handleOpenEditModal = (task) => {
+    setTaskToEdit(task);
+    setEditModalOpen(true);
+  };
+
+  const handleDeleteTask = (taskId) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
   };
 
   const tasksByStatus = (status) => {
@@ -94,7 +109,7 @@ const TaskBoard = () => {
 
   return (
     <div
-      key={background.url || background.gradient || background.color} // Clave única para forzar redibujo
+      key={background.url || background.gradient || background.color}
       className="task-board-container"
       style={{
         background: background.url
@@ -102,11 +117,11 @@ const TaskBoard = () => {
           : background.gradient
           ? background.gradient
           : background.color || 'transparent',
-        backgroundSize: 'cover', // Asegurar que el fondo cubre el contenedor
-        backgroundRepeat: 'no-repeat', // Evitar repeticiones
-        backgroundPosition: 'center', // Centrar la imagen
-        height: '100vh', // Asegurar altura completa de la pantalla
-        overflow: 'hidden', // Evitar desbordamientos
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        height: '100vh',
+        overflow: 'auto',
       }}
     >
       <BackgroundSelector
@@ -131,16 +146,25 @@ const TaskBoard = () => {
           title="No iniciado"
           tasks={tasksByStatus('No iniciado')}
           onDrop={(taskId) => handleUpdateTask(taskId, 'No iniciado')}
+          onEdit={handleOpenEditModal}
+          onDelete={handleDeleteTask}
+          onCancel={(taskId) => handleUpdateTask(taskId, 'Cancelado')}
         />
         <Column
           title="En proceso"
           tasks={tasksByStatus('En proceso')}
           onDrop={(taskId) => handleUpdateTask(taskId, 'En proceso')}
+          onEdit={handleOpenEditModal}
+          onDelete={handleDeleteTask}
+          onCancel={(taskId) => handleUpdateTask(taskId, 'Cancelado')}
         />
         <Column
           title="Finalizado"
           tasks={tasksByStatus('Finalizado')}
           onDrop={(taskId) => handleUpdateTask(taskId, 'Finalizado')}
+          onEdit={handleOpenEditModal}
+          onDelete={handleDeleteTask}
+          onCancel={(taskId) => handleUpdateTask(taskId, 'Cancelado')}
         />
       </div>
       <CreateTaskModal
@@ -154,8 +178,15 @@ const TaskBoard = () => {
         tasks={tasksByStatus('Cancelado')}
         onRestore={(taskId) => handleUpdateTask(taskId, 'No iniciado')}
       />
+      <EditTaskModal
+        isOpen={isEditModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        task={taskToEdit}
+        onSave={handleEditTask}
+      />
     </div>
   );
 };
 
 export default TaskBoard;
+
