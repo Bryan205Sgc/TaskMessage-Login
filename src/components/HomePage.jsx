@@ -14,6 +14,7 @@ import {
   updateTask,
 } from '../utils/api';
 import { socket } from '../sockets/socket';
+import { jwtDecode } from 'jwt-decode';
 import '../styles/TaskBoard.css';
 
 const TaskBoard = () => {
@@ -27,6 +28,17 @@ const TaskBoard = () => {
     url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732504320/ufo9ylxhpfylpxis4oyu.jpg',
     isLight: false,
   });
+
+  const [role, setRole] = useState('');
+
+  // Obtener rol desde el token
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      const decoded = jwtDecode(token);
+      setRole(decoded.role || '');
+    }
+  }, []);
 
   useEffect(() => {
     fetchTasks()
@@ -95,12 +107,37 @@ const TaskBoard = () => {
   };
 
   const handleOpenEditModal = (task) => {
-    setTaskToEdit(task);
-    setEditModalOpen(true);
+    if (role === 'Administrador' || role === 'Administrador Org') {
+      setTaskToEdit(task);
+      setEditModalOpen(true);
+    } else {
+      alert('No tienes permiso para editar tareas.');
+    }
   };
 
   const handleDeleteTask = (taskId) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+    if (role === 'Administrador' || role === 'Administrador Org') {
+      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+    } else {
+      alert('No tienes permiso para eliminar tareas.');
+    }
+  };
+
+  const handleCancelTask = (taskId) => {
+    if (role === 'Administrador' || role === 'Administrador Org') {
+      handleUpdateTask(taskId, 'Cancelado');
+    } else {
+      alert('No tienes permiso para cancelar tareas.');
+    }
+  };
+
+  const handleAssignTask = (taskId, employeeId) => {
+    if (role === 'Empleado' && employeeId !== localStorage.getItem('userId')) {
+      alert('Solo puedes asignarte tareas a ti mismo.');
+    } else {
+      // Lógica para asignar tarea
+      console.log(`Tarea ${taskId} asignada a ${employeeId}`);
+    }
   };
 
   const tasksByStatus = (status) => {
@@ -148,7 +185,7 @@ const TaskBoard = () => {
           onDrop={(taskId) => handleUpdateTask(taskId, 'No iniciado')}
           onEdit={handleOpenEditModal}
           onDelete={handleDeleteTask}
-          onCancel={(taskId) => handleUpdateTask(taskId, 'Cancelado')}
+          onCancel={handleCancelTask}
         />
         <Column
           title="En proceso"
@@ -156,7 +193,7 @@ const TaskBoard = () => {
           onDrop={(taskId) => handleUpdateTask(taskId, 'En proceso')}
           onEdit={handleOpenEditModal}
           onDelete={handleDeleteTask}
-          onCancel={(taskId) => handleUpdateTask(taskId, 'Cancelado')}
+          onCancel={handleCancelTask}
         />
         <Column
           title="Finalizado"
@@ -164,7 +201,7 @@ const TaskBoard = () => {
           onDrop={(taskId) => handleUpdateTask(taskId, 'Finalizado')}
           onEdit={handleOpenEditModal}
           onDelete={handleDeleteTask}
-          onCancel={(taskId) => handleUpdateTask(taskId, 'Cancelado')}
+          onCancel={handleCancelTask}
         />
       </div>
       <CreateTaskModal
@@ -189,4 +226,3 @@ const TaskBoard = () => {
 };
 
 export default TaskBoard;
-

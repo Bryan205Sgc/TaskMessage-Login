@@ -28,4 +28,4 @@ export const createTask = (taskData) => {
 export const assignTask = (taskId, employeeId) =>
   axios.post(`${BASE_URL}/assign-task`, { taskId, employeeId });
 
-export const fetchEmployees = () => axios.get('http://localhost:4000/employees');
+export const fetchEmployees = () => axios.get('http://localhost:4000/api/v1/employee/all');
