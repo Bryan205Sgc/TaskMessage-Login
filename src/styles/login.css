@@ -1,21 +1,97 @@
-.columForm{
-    display:flex;
-    justify-content: center;
-    justify-items: center;
-    
+/* Contenedor principal del login */
+.login-container {
+  width: 350px;
+  height: auto;
+  margin: 0 auto; /* Centra horizontalmente */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centra verticalmente */
+  padding: 30px;
+  border-radius: 10px;
+  border: 4px solid #4ae800; /* Color principal */
+  background-color: #000; /* Fondo negro */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  font-family: Arial, sans-serif;
+  text-align: center;
 }
 
-h2{
-    text-align: center;
+/* Título */
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #4ae800; /* Verde principal */
+  font-size: 1.5em;
+  font-weight: bold;
 }
 
-input{
-    border-radius: 25px;
-    border-color: white;
+/* Contenedor del formulario */
+.columForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
-button{
-    border-radius: 5px;
-    border-color: white;
-    width: 45vh;
+.columForm form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Etiquetas */
+.columForm label {
+  display: block;
+  font-size: 1em;
+  margin-bottom: 8px;
+  color: #4ae800; /* Verde principal */
+  text-align: left;
+  width: 90%;
+}
+
+/* Campos de entrada */
+.columForm input {
+  width: 90%; /* Ancho reducido para centrar mejor */
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 2px solid #4ae800; /* Verde principal */
+  background-color: #e0f1de; /* Fondo claro */
+  color: #000;
+  font-size: 1em;
+  text-align: center; /* Centrar texto en los inputs */
+}
+
+.columForm input:focus {
+  outline: none;
+  border-color: #2a9400; /* Verde oscuro */
+  background-color: #f0f0f0; /* Un poco más claro */
+}
+
+/* Botón */
+.columForm button {
+  width: 70%; /* Más pequeño que los inputs */
+  padding: 10px; /* Reduce el padding */
+  font-size: 1em;
+  font-weight: bold;
+  color: #fff;
+  background-color: #4ae800; /* Verde principal */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  margin-top: 10px; /* Espaciado con los inputs */
+}
+
+.columForm button:hover {
+  background-color: #2a9400; /* Verde oscuro */
+  transform: translateY(-2px);
+}
+
+.columForm button:active {
+  background-color: #1d6b00; /* Verde más oscuro */
+  transform: translateY(0);
 }
