@@ -20,25 +20,26 @@ const Login = () => {
         if(!email || !pass) {
             alert('El campo de Email Y Password es necesario')  
         }else{
-            axios.post("http://localhost:4000/api/v1/employee/login", {email, pass})
-                .then(response => { 
+            axios
+                .post("http://localhost:4000/api/v1/employee/login", { email, pass })
+                .then((response) => {
                     const token = response.data.token;
-                    localStorage.setItem('authToken', token);
-                    Navigate('/home');
-                    
-                }).catch(e =>{
-                    if(e.responses){
-                        const status = e.response.status;
-                        if( status === 404){
-                            alert('Este usuario no xiste')
-                        }else if(status === 401){
-                            alert('Contraseña incorrecta')
-                        }
-                    }
+                    const rol = response.data.rol; // El rol debe venir en la respuesta
+                    localStorage.setItem("authToken", token);
+                    localStorage.setItem("userRole", rol); // Guarda el rol en localStorage
+                    Navigate("/home"); // Redirige al dashboard
                 })
-        }
-
-        
+                .catch((e) => {
+                    if (e.response) {
+                    const status = e.response.status;
+                    if (status === 404) {
+                        alert("Este usuario no existe");
+                    } else if (status === 401) {
+                        alert("Contraseña incorrecta");
+                    }
+                    }
+                });
+        }   
     };
 
     return (

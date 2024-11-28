@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useDrag } from 'react-dnd';
-import '../styles/Task.css';
+import React, { useState } from "react";
+import { useDrag } from "react-dnd";
+import "../styles/Task.css";
 
 const Task = ({ task, employees, onEdit, onDelete, onCancel, onAssign }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'TASK',
+    type: "TASK",
     item: task,
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
@@ -12,7 +12,9 @@ const Task = ({ task, employees, onEdit, onDelete, onCancel, onAssign }) => {
   }));
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState('');
+  const [selectedEmployee, setSelectedEmployee] = useState("");
+
+  const role = localStorage.getItem("userRole"); // Lee el rol desde el localStorage
 
   const toggleMenu = (event) => {
     event.preventDefault(); // Evitar menú contextual predeterminado
@@ -22,7 +24,7 @@ const Task = ({ task, employees, onEdit, onDelete, onCancel, onAssign }) => {
   const handleAssign = () => {
     if (selectedEmployee) {
       onAssign(task._id, selectedEmployee);
-      setSelectedEmployee(''); // Reiniciar la selección
+      setSelectedEmployee(""); // Reiniciar la selección
       setMenuOpen(false); // Cerrar el menú
     }
   };
@@ -46,31 +48,50 @@ const Task = ({ task, employees, onEdit, onDelete, onCancel, onAssign }) => {
         </button>
         {menuOpen && (
           <div className="menu-dropdown">
-            <button onClick={() => onEdit(task)}>Editar</button>
-            <button onClick={() => onDelete(task._id)}>Eliminar</button>
-            <button onClick={() => onCancel(task._id)}>Cancelar</button>
-            <div className="assign-section">
-              <label htmlFor={`assign-${task._id}`}>Asignar a:</label>
-              <select
-                id={`assign-${task._id}`}
-                value={selectedEmployee}
-                onChange={(e) => setSelectedEmployee(e.target.value)}
-              >
-                <option value="">Selecciona un empleado</option>
-                {employees.map((employee) => (
-                  <option key={employee._id} value={employee._id}>
-                    {employee.nombre}
-                  </option>
-                ))}
-              </select>
-              <button
-                onClick={handleAssign}
-                disabled={!selectedEmployee}
-                className="assign-button"
-              >
-                Asignar
-              </button>
-            </div>
+            {/* Opciones específicas para administradores */}
+            {role === "Administrador App" ||
+            role === "Administrador Org" ||
+            role === "Administrador Dept" ? (
+              <>
+                <button onClick={() => onEdit(task)}>Editar</button>
+                <button onClick={() => onDelete(task._id)}>Eliminar</button>
+                <button onClick={() => onCancel(task._id)}>Cancelar</button>
+              </>
+            ) : null}
+
+            {/* Opciones para empleados */}
+            {
+            role === "Administrador Dept" ||
+            role === "Administrador App" ||
+            role === "Administrador Org" ||
+            role === "Empleado" ? (
+              <div className="assign-section">
+                <label htmlFor={`assign-${task._id}`}>Asignar a:</label>
+                <select
+                  id={`assign-${task._id}`}
+                  value={selectedEmployee}
+                  onChange={(e) => setSelectedEmployee(e.target.value)}
+                >
+                  {employees
+                    .filter(
+                      (employee) =>
+                        employee._id === localStorage.getItem("userId")
+                    )
+                    .map((employee) => (
+                      <option key={employee._id} value={employee._id}>
+                        {employee.nombre}
+                      </option>
+                    ))}
+                </select>
+                <button
+                  onClick={handleAssign}
+                  disabled={!selectedEmployee}
+                  className="assign-button"
+                >
+                  Asignar
+                </button>
+              </div>
+            ) : null}
           </div>
         )}
       </div>
@@ -79,4 +100,3 @@ const Task = ({ task, employees, onEdit, onDelete, onCancel, onAssign }) => {
 };
 
 export default Task;
-

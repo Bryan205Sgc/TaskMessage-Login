@@ -36,7 +36,7 @@ const TaskBoard = () => {
     const token = localStorage.getItem('authToken');
     if (token) {
       const decoded = jwtDecode(token);
-      setRole(decoded.role || '');
+      setRole(decoded.rol || '');
     }
   }, []);
 
@@ -107,36 +107,33 @@ const TaskBoard = () => {
   };
 
   const handleOpenEditModal = (task) => {
-    if (role === 'Administrador' || role === 'Administrador Org') {
+    if (
+      role === 'Administrador Org' ||
+      role === 'Administrador App' ||
+      role === 'Administrador Dept'
+    ) {
       setTaskToEdit(task);
       setEditModalOpen(true);
-    } else {
-      alert('No tienes permiso para editar tareas.');
     }
   };
 
   const handleDeleteTask = (taskId) => {
-    if (role === 'Administrador' || role === 'Administrador Org') {
+    if (
+      role === 'Administrador Org' ||
+      role === 'Administrador App' ||
+      role === 'Administrador Dept'
+    ) {
       setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
-    } else {
-      alert('No tienes permiso para eliminar tareas.');
     }
   };
 
   const handleCancelTask = (taskId) => {
-    if (role === 'Administrador' || role === 'Administrador Org') {
+    if (
+      role === 'Administrador Org' ||
+      role === 'Administrador App' ||
+      role === 'Administrador Dept'
+    ) {
       handleUpdateTask(taskId, 'Cancelado');
-    } else {
-      alert('No tienes permiso para cancelar tareas.');
-    }
-  };
-
-  const handleAssignTask = (taskId, employeeId) => {
-    if (role === 'Empleado' && employeeId !== localStorage.getItem('userId')) {
-      alert('Solo puedes asignarte tareas a ti mismo.');
-    } else {
-      // Lógica para asignar tarea
-      console.log(`Tarea ${taskId} asignada a ${employeeId}`);
     }
   };
 
@@ -166,42 +163,64 @@ const TaskBoard = () => {
         selectedBackground={background}
       />
 
-      <button
-        className="create-task-btn"
-        onClick={() => setCreateModalOpen(true)}
-      >
-        Crear Tarea
-      </button>
-      <button
-        className="cancelled-tasks-btn"
-        onClick={() => setCancelledModalOpen(true)}
-      >
-        Ver tareas canceladas
-      </button>
+      {role !== 'Empleado' && (
+        <button
+          className="create-task-btn"
+          onClick={() => setCreateModalOpen(true)}
+        >
+          Crear Tarea
+        </button>
+      )}
+      {role !== 'Empleado' && (
+        <button
+          className="cancelled-tasks-btn"
+          onClick={() => setCancelledModalOpen(true)}
+        >
+          Ver tareas canceladas
+        </button>
+      )}
       <div className="task-board">
         <Column
           title="No iniciado"
           tasks={tasksByStatus('No iniciado')}
           onDrop={(taskId) => handleUpdateTask(taskId, 'No iniciado')}
-          onEdit={handleOpenEditModal}
-          onDelete={handleDeleteTask}
-          onCancel={handleCancelTask}
+          onEdit={
+            role !== 'Empleado' ? handleOpenEditModal : undefined
+          }
+          onDelete={
+            role !== 'Empleado' ? handleDeleteTask : undefined
+          }
+          onCancel={
+            role !== 'Empleado' ? handleCancelTask : undefined
+          }
         />
         <Column
           title="En proceso"
           tasks={tasksByStatus('En proceso')}
           onDrop={(taskId) => handleUpdateTask(taskId, 'En proceso')}
-          onEdit={handleOpenEditModal}
-          onDelete={handleDeleteTask}
-          onCancel={handleCancelTask}
+          onEdit={
+            role !== 'Empleado' ? handleOpenEditModal : undefined
+          }
+          onDelete={
+            role !== 'Empleado' ? handleDeleteTask : undefined
+          }
+          onCancel={
+            role !== 'Empleado' ? handleCancelTask : undefined
+          }
         />
         <Column
           title="Finalizado"
           tasks={tasksByStatus('Finalizado')}
           onDrop={(taskId) => handleUpdateTask(taskId, 'Finalizado')}
-          onEdit={handleOpenEditModal}
-          onDelete={handleDeleteTask}
-          onCancel={handleCancelTask}
+          onEdit={
+            role !== 'Empleado' ? handleOpenEditModal : undefined
+          }
+          onDelete={
+            role !== 'Empleado' ? handleDeleteTask : undefined
+          }
+          onCancel={
+            role !== 'Empleado' ? handleCancelTask : undefined
+          }
         />
       </div>
       <CreateTaskModal
