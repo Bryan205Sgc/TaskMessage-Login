@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { fetchDepartments, registerEmployee } from '../utils/api';
+import { useNavigate } from 'react-router-dom';
+import { registerEmployee } from '../utils/api';
+import '../styles/login.css';
 
 const RegisterEmployee = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +11,7 @@ const RegisterEmployee = () => {
     email: ''
   });
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,59 +23,69 @@ const RegisterEmployee = () => {
     try {
       const response = await registerEmployee(formData);
       setMessage(`Empleado registrado exitosamente: ${response.data.employee.nombre}`);
+      
+      setTimeout(() => {
+        navigate('/login');
+      }, 1000);
     } catch (error) {
       setMessage(`Error: ${error.response?.data?.message || error.message}`);
     }
   };
 
   return (
-    <div>
+    <section className="login-container">
       <h2>Registrar Nuevo Empleado</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Nombre:</label>
-          <input
-            type="text"
-            name="nombre"
-            value={formData.nombre}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Código:</label>
-          <input
-            type="text"
-            name="codigo"
-            value={formData.codigo}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Contraseña:</label>
-          <input
-            type="password"
-            name="pass"
-            value={formData.pass}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">Registrar</button>
-      </form>
-      {message && <p>{message}</p>}
-    </div>
+      <div className='columForm'>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="nombre">Nombre:</label>
+            <input
+              type="text"
+              id="nombre"
+              name="nombre"
+              value={formData.nombre}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="codigo">Código:</label>
+            <input
+              type="text"
+              id="codigo"
+              name="codigo"
+              value={formData.codigo}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="pass">Contraseña:</label>
+            <input
+              type="password"
+              id="pass"
+              name="pass"
+              value={formData.pass}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <button type="submit">Registrar</button>
+        </form>
+        {message && <p className="message">{message}</p>}
+      </div>
+    </section>
   );
 };
 
