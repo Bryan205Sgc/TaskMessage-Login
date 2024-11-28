@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:4000/api/v1/task';
-const EMPLOYEE_URL = 'http://localhost:4000/api/v1/employee';
+const BASE_URL = 'https://proyectogestortareas.onrender.com/api/v1/task';
+const EMPLOYEE_URL = 'https://proyectogestortareas.onrender.com/api/v1/employee';
 
 axios.interceptors.request.use(
   (config) => {
