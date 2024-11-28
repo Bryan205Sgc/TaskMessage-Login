@@ -1,14 +1,12 @@
 import '../styles/login.css';
 import { useNavigate } from "react-router-dom";
-import React, { useState, useEffect } from "react";
-
+import React, { useState } from "react";
 import axios from 'axios';
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [pass, setPassword] = useState("");
-    const Navigate = useNavigate();
-
+    const navigate = useNavigate(); // Renombrado para seguir convenciones de código en React
 
     const handleSubmit = (e) => {
         e.preventDefault(); 
@@ -16,10 +14,9 @@ const Login = () => {
     };
 
     const loginAction = (email, pass) => {
-
-        if(!email || !pass) {
-            alert('El campo de Email Y Password es necesario')  
-        }else{
+        if (!email || !pass) {
+            alert('El campo de Email y Password es necesario');  
+        } else {
             axios
                 .post("http://localhost:4000/api/v1/employee/login", { email, pass })
                 .then((response) => {
@@ -27,16 +24,16 @@ const Login = () => {
                     const rol = response.data.rol; // El rol debe venir en la respuesta
                     localStorage.setItem("authToken", token);
                     localStorage.setItem("userRole", rol); // Guarda el rol en localStorage
-                    Navigate("/home"); // Redirige al dashboard
+                    navigate("/home"); // Redirige al dashboard
                 })
                 .catch((e) => {
                     if (e.response) {
-                    const status = e.response.status;
-                    if (status === 404) {
-                        alert("Este usuario no existe");
-                    } else if (status === 401) {
-                        alert("Contraseña incorrecta");
-                    }
+                        const status = e.response.status;
+                        if (status === 404) {
+                            alert("Este usuario no existe");
+                        } else if (status === 401) {
+                            alert("Contraseña incorrecta");
+                        }
                     }
                 });
         }   
@@ -69,6 +66,15 @@ const Login = () => {
                     </div>
                     <button type="submit">Ingresar</button>
                 </form>
+                <div className="register-redirect">
+                    <p>¿No tienes una cuenta?</p>
+                    <button
+                        className="register-button"
+                        onClick={() => navigate('/register-employee')}
+                    >
+                        Regístrate aquí
+                    </button>
+                </div>
             </div>
         </section>
     );

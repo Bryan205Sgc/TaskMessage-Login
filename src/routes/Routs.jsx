@@ -7,10 +7,11 @@ import * as jwt_decode from 'jwt-decode';
 import PrivateRoutes from './PrivateRoot';
 import Login from '../components/Login';
 import TaskBoard from '../components/HomePage';
+import RegisterEmployee from '../components/RegisterEmployee'; // Importa el componente de registro
 
 export default function Root() {
-  const [userRole, setUserRole] = useState(null); 
-  const [loading, setLoading] = useState(true);  
+  const [userRole, setUserRole] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -33,15 +34,23 @@ export default function Root() {
     <BrowserRouter>
       <DndProvider backend={HTML5Backend}>
         <Routes>
+          {/* Ruta de inicio de sesión */}
           <Route path='/login' element={<Login />} />
+          
+          {/* Ruta para el formulario de registro */}
+          <Route path='/register-employee' element={<RegisterEmployee />} />
+          
+          {/* Ruta para el tablero principal */}
           <Route path='/home' element={<TaskBoard />} />
 
+          {/* Rutas protegidas dependiendo del rol */}
           {
             userRole === 'Administrador App'
               ? <Route path='/' element={<PrivateRoutes />} />
               : <Route path='/' element={<Navigate to='/login' replace />} />
           }
 
+          {/* Redirección para rutas no definidas */}
           <Route path='*' element={<Navigate to='/login' replace />} />
         </Routes>
       </DndProvider>
