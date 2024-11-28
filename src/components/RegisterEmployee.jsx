@@ -23,10 +23,9 @@ const RegisterEmployee = () => {
     try {
       const response = await registerEmployee(formData);
       setMessage(`Empleado registrado exitosamente: ${response.data.employee.nombre}`);
-      
       setTimeout(() => {
         navigate('/login');
-      }, 1000);
+      }, 0);
     } catch (error) {
       setMessage(`Error: ${error.response?.data?.message || error.message}`);
     }
@@ -35,7 +34,7 @@ const RegisterEmployee = () => {
   return (
     <section className="login-container">
       <h2>Registrar Nuevo Empleado</h2>
-      <div className='columForm'>
+      <div className="columForm">
         <form onSubmit={handleSubmit}>
           <div>
             <label htmlFor="nombre">Nombre:</label>
@@ -84,6 +83,15 @@ const RegisterEmployee = () => {
           <button type="submit">Registrar</button>
         </form>
         {message && <p className="message">{message}</p>}
+        <div className="register-redirect">
+          <p>¿Ya tienes una cuenta?</p>
+          <button
+            className="register-button"
+            onClick={() => navigate('/login')}
+          >
+            Inicia sesión aquí
+          </button>
+        </div>
       </div>
     </section>
   );

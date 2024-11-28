@@ -43,7 +43,7 @@ export const assignTask = (taskId, employeeId) =>
   axios.post(`${BASE_URL}/assign-task`, { taskId, employeeId });
 
 export const fetchEmployees = () =>
-  axios.get(`${EMPLOYEE_URL}/all`);
+  axios.get(EMPLOYEE_URL);
 
 export const registerEmployee = (employeeData) =>
   axios.post(`${EMPLOYEE_URL}/register`, employeeData);

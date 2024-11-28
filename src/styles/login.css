@@ -1,3 +1,15 @@
+body {
+  background-image: url('https://res.cloudinary.com/dlggyukyk/image/upload/v1732829113/huxdpfm1bckmxl3sbupw.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
 /* Contenedor principal del login */
 .login-container {
   width: 350px;
@@ -94,29 +106,4 @@
 .columForm button:active {
   background-color: #1d6b00; /* Verde más oscuro */
   transform: translateY(0);
-}
-
-.register-redirect {
-  margin-top: 1rem;
-  text-align: center;
-}
-
-.register-redirect p {
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-.register-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.register-button:hover {
-  background-color: #0056b3;
 }
