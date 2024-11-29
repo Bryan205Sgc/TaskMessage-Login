@@ -3,15 +3,15 @@ import { useDrop } from 'react-dnd';
 import Task from './Task';
 import '../styles/Column.css';
 
-const Column = ({ 
-  title, 
-  tasks = [], 
-  onDrop, 
-  onEdit, 
-  onDelete, 
-  onCancel, 
-  onAssign, 
-  employees = [] 
+const Column = ({
+  title,
+  tasks = [],
+  onDrop,
+  onEdit,
+  onDelete,
+  onCancel,
+  onAssign,
+  employees = [],
 }) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'TASK',
@@ -22,10 +22,7 @@ const Column = ({
   }));
 
   return (
-    <div
-      ref={drop}
-      className={`column ${isOver ? 'column-hover' : ''}`}
-    >
+    <div ref={drop} className={`column ${isOver ? 'column-hover' : ''}`}>
       <h3>{title}</h3>
       {tasks.length > 0 ? (
         tasks.map((task) => (

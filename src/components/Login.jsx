@@ -21,9 +21,11 @@ const Login = () => {
                 .post("https://proyectogestortareas.onrender.com/api/v1/employee/login", { email, pass })
                 .then((response) => {
                     const token = response.data.token;
-                    const rol = response.data.rol; // El rol debe venir en la respuesta
+                    const rol = response.data.rol;
+                    const id = response.data.id;
                     localStorage.setItem("authToken", token);
-                    localStorage.setItem("userRole", rol); // Guarda el rol en localStorage
+                    localStorage.setItem("userRole", rol);
+                    localStorage.setItem("userId", id);
                     navigate("/home"); // Redirige al dashboard
                 })
                 .catch((e) => {

@@ -1,17 +1,17 @@
 .article-wrapper {
-  width: 250px;
+  width: 280px;
   transition: 0.15s all ease-in-out;
   border-radius: 10px;
-  padding: 5px;
-  border: 4px solid #4ae800; /* Color principal */
+  padding: 10px;
+  border: 4px solid #4ae800;
   cursor: pointer;
   background-color: rgb(0, 0, 0);
-  margin: 15px 0; /* Espaciado superior e inferior entre tareas */
+  margin: 20px 0;
 }
 
 .article-wrapper:hover {
-  box-shadow: 10px 10px 0 #4ae800, 20px 20px 0 #2a9400; /* Tonos derivados del color principal */
-  border-color: #2a9400; /* Oscurecer al pasar el mouse */
+  box-shadow: 10px 10px 0 #4ae800, 20px 20px 0 #2a9400;
+  border-color: #2a9400;
   transform: translate(-10px, -10px);
 }
 
@@ -20,52 +20,55 @@
   transform: translate(0, 0);
 }
 
-/* Contenedor del proyecto */
 .container-project {
   width: 100%;
-  height: 100px;
-  background: #e0f1de; /* Fondo claro relacionado con el color principal */
+  height: auto;
+  background: #e0f1de;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Centra el contenido verticalmente */
-  align-items: center; /* Centra el contenido horizontalmente */
-  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
   box-sizing: border-box;
   overflow: hidden;
   border-radius: 10px;
 }
 
-/* Título de la tarea */
 .task-title {
-  font-size: 1em;
+  font-size: 1.2em;
   font-weight: bold;
-  margin: 0;
+  margin: 0 0 10px 0;
   text-align: center;
-  overflow-wrap: break-word; /* Permite cortar palabras largas */
+  overflow-wrap: break-word;
   word-wrap: break-word;
-  overflow: hidden;
-  color: #2a9400; /* Color secundario derivado del principal */
+  color: #2a9400;
 }
 
-/* Descripción de la tarea */
 .task-description {
-  font-size: 0.9em;
+  font-size: 1em;
   margin: 5px 0 0 0;
   text-align: center;
   overflow-wrap: break-word;
   word-wrap: break-word;
-  color: #000000; /* Usa el color principal */
+  color: #000000;
 }
 
-/* Información adicional (etiquetas de progresión) */
+.task-assignee {
+  font-size: 1em;
+  margin: 10px 0 0 0;
+  color: #000000;
+  font-weight: bold;
+  text-align: center;
+}
+
 .project-info {
   padding-top: 10px;
   text-align: center;
 }
 
 .project-type {
-  background: #4ae800; /* Fondo claro derivado del color principal */
-  color: #206e01; /* Texto oscuro relacionado */
+  background: #4ae800;
+  color: #206e01;
   font-weight: bold;
   padding: 0.3em 0.7em;
   border-radius: 15px;
@@ -73,10 +76,9 @@
   letter-spacing: -0.6px;
 }
 
-/* Hover de las etiquetas */
 .project-type:hover {
-  background: #2a9400; /* Fondo principal en hover */
-  color: white; /* Contraste de texto */
+  background: #2a9400;
+  color: white;
 }
 
 .task-menu {
@@ -84,22 +86,20 @@
   display: inline-block;
 }
 
-/* Dropdown del menú */
 .menu-dropdown {
   background-color: #4ae800;
   border: 4px solid #000000;
   border-radius: 5px;
-  padding: 10px; /* Espaciado interno */
+  padding: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  min-width: 180px; /* Ajusta el ancho mínimo del menú */
+  min-width: 180px;
   position: absolute;
-  user-select: none; /* Evitar selección accidental */
-  top: -10px; /* Ajusta la posición para que el menú aparezca arriba */
-  transform: translate(-50%, -100%); /* Mueve el menú hacia arriba */
+  user-select: none;
+  top: -10px;
+  transform: translate(-50%, -100%);
 }
 
-/* Botones dentro del menú */
 .menu-dropdown button {
   display: block;
   width: 100%;
@@ -118,10 +118,12 @@
   background-color: #f0f0f0;
 }
 
-
-/* Sección de asignación */
 .assign-section {
   margin-top: 10px;
+}
+
+.task-assigned {
+  color: #083513;
 }
 
 .assign-section label {
@@ -155,25 +157,24 @@
   cursor: not-allowed;
 }
 
-
 .menu-toggle {
-  background-color: #000000; /* Fondo negro */
-  color: #4ae800; /* Verde brillante */
+  background-color: #000000;
+  color: #4ae800;
   font-size: 1.5rem;
   border: 2px solid #4ae800;
   border-radius: 5px;
-  padding: 2px 6px; /* Ajusta el padding */
+  padding: 2px 6px;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
 }
 
 .menu-toggle:hover {
-  background-color: #4ae800; /* Verde brillante en hover */
-  color: #000000; /* Contraste de texto */
-  transform: scale(1.1); /* Aumenta el tamaño */
+  background-color: #4ae800;
+  color: #000000;
+  transform: scale(1.1);
 }
 
 .menu-toggle:active {
-  background-color: #2a9400; /* Verde más oscuro */
+  background-color: #2a9400;
   transform: scale(1);
 }

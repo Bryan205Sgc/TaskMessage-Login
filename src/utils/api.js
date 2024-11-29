@@ -47,4 +47,3 @@ export const fetchEmployees = () =>
 
 export const registerEmployee = (employeeData) =>
   axios.post(`${EMPLOYEE_URL}/register`, employeeData);
-

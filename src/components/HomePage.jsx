@@ -12,7 +12,8 @@ import {
   updateTaskToFinished,
   updateTaskToCancelled,
   updateTask,
-  fetchEmployees
+  fetchEmployees,
+  assignTask,
 } from '../utils/api';
 import { socket } from '../sockets/socket';
 import { jwtDecode } from 'jwt-decode';
@@ -30,40 +31,35 @@ const TaskBoard = () => {
     url: 'https://res.cloudinary.com/dlggyukyk/image/upload/v1732504320/ufo9ylxhpfylpxis4oyu.jpg',
     isLight: false,
   });
-
   const [role, setRole] = useState('');
+  const [userId, setUserId] = useState('');
 
-  // Obtener rol desde el token
+  // Obtener rol y usuario desde el token
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     if (token) {
       const decoded = jwtDecode(token);
       setRole(decoded.rol || '');
+      setUserId(decoded.id || '');
     }
   }, []);
 
+  // Obtener empleados
   useEffect(() => {
     fetchEmployees()
       .then((response) => {
-        console.log("Respuesta completa del backend para empleados:", response);
-  
-        // Extrae los empleados correctamente de `response.data.employees`
+        console.log('Respuesta del backend para empleados:', response);
         if (response.data && Array.isArray(response.data.employees)) {
-          setEmployees(response.data.employees); // Actualiza el estado
-          console.log("Empleados correctamente cargados:", response.data.employees);
+          setEmployees(response.data.employees);
         } else {
-          console.error("Los datos de empleados no son válidos:", response);
-          setEmployees([]); // Si no hay empleados válidos, reinicia el estado
+          console.error('Los datos de empleados no son válidos:', response);
+          setEmployees([]);
         }
       })
-      .catch((err) => console.error("Error fetching employees:", err));
+      .catch((err) => console.error('Error fetching employees:', err));
   }, []);
-  
-  
-  useEffect(() => {
-    console.log("Empleados en el estado:", employees); // Verifica el estado después de actualizarlo
-  }, [employees]);
-  
+
+  // Obtener tareas
   useEffect(() => {
     fetchTasks()
       .then((res) => setTasks(res.data.tasks))
@@ -83,13 +79,20 @@ const TaskBoard = () => {
   const handleAssignTask = (taskId, employeeId) => {
     console.log(`Asignando tarea ${taskId} al empleado ${employeeId}`);
     
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task._id === taskId
-          ? { ...task, assignedTo: employeeId }
-          : task
-      )
-    );
+    assignTask(taskId, employeeId)
+      .then((response) => {
+        const updatedTask = response.data.task;
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task._id === updatedTask._id ? updatedTask : task
+          )
+        );
+        console.log("Tarea actualizada:", updatedTask);
+      })
+      .catch((error) => {
+        console.error("Error asignando tarea:", error);
+        alert("Hubo un problema asignando la tarea. Inténtalo de nuevo.");
+      });
   };
   
   
@@ -111,9 +114,12 @@ const TaskBoard = () => {
     if (updateTaskFn) {
       updateTaskFn(taskId)
         .then((res) => {
-          const updatedTask = res.data;
           setTasks((prev) =>
-            prev.map((task) => (task._id === updatedTask._id ? updatedTask : task))
+            prev.map((task) =>
+              task._id === taskId
+                ? { ...task, progresion: newStatus }
+                : task
+            )
           );
         })
         .catch((err) => console.error('Error al actualizar la tarea:', err));
@@ -230,10 +236,10 @@ const TaskBoard = () => {
         />
 
         <Column
-          title="En Proceso"
-          tasks={tasksByStatus('En Proceso')}
-          employees={employees} 
-          onDrop={(taskId) => handleUpdateTask(taskId, 'En Proceso')}
+          title="En proceso"
+          tasks={tasksByStatus('En proceso')}
+          employees={employees}
+          onDrop={(taskId) => handleUpdateTask(taskId, 'En proceso')}
           onEdit={role !== 'Empleado' ? handleOpenEditModal : undefined}
           onDelete={role !== 'Empleado' ? handleDeleteTask : undefined}
           onCancel={role !== 'Empleado' ? handleCancelTask : undefined}
@@ -243,7 +249,7 @@ const TaskBoard = () => {
         <Column
           title="Finalizado"
           tasks={tasksByStatus('Finalizado')}
-          employees={employees} 
+          employees={employees}
           onDrop={(taskId) => handleUpdateTask(taskId, 'Finalizado')}
           onEdit={role !== 'Empleado' ? handleOpenEditModal : undefined}
           onDelete={role !== 'Empleado' ? handleDeleteTask : undefined}
@@ -272,4 +278,4 @@ const TaskBoard = () => {
   );
 };
 
-export default TaskBoard;
+export default TaskBoard

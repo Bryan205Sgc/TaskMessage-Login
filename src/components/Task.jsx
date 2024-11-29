@@ -14,85 +14,72 @@ const Task = ({ task, employees, onEdit, onDelete, onCancel, onAssign }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState("");
 
-  // Cargar datos del usuario desde localStorage
-  const userRole = localStorage.getItem("userRole") || "";
-  const userId = localStorage.getItem("userId") || "";
+  const role = localStorage.getItem("userRole");
+  const userId = localStorage.getItem("userId");
 
-  // Manejar la apertura/cierre del menú
+  console.log("ID del usuario logueado:", userId);
+  console.log("Rol del usuario:", role);
+  console.log("Empleados recibidos:", employees);
+
   const toggleMenu = (event) => {
-    event.preventDefault(); // Evitar el menú contextual predeterminado
-    setMenuOpen((prev) => !prev); // Alternar estado del menú
+    event.preventDefault();
+    setMenuOpen(!menuOpen);
   };
 
-  // Manejar la asignación de tareas
   const handleAssign = () => {
     if (selectedEmployee) {
-      onAssign(task._id, selectedEmployee); // Llamar función de asignación
-      setSelectedEmployee(""); // Reiniciar la selección
-      setMenuOpen(false); // Cerrar el menú
+      onAssign(task._id, selectedEmployee);
+      setSelectedEmployee("");
+      setMenuOpen(false);
     }
   };
 
-  console.log("Empleados recibidos en Task.jsx:", employees);
-  console.log("Rol del usuario:", userRole);
-  console.log("ID del usuario:", userId);
-
-  const filteredEmployees =  
-    Array.isArray(employees) && userRole === "Empleado"
-      ? employees.filter((employee) => employee._id === userId)
-      : Array.isArray(employees)
-      ? employees
-      : [];
-
-  if (filteredEmployees.length === 0) {
-    console.log("No hay empleados disponibles para esta tarea.");
-  }
-  console.log("Empleados filtrados:", filteredEmployees);
+  const getEmployeeName = (employeeId) => {
+    const employee = employees.find((e) => e._id === employeeId);
+    return employee ? employee.nombre : "Empleado no encontrado";
+  };
   
-  console.log("Empleados en el dropdown:", filteredEmployees);
+
+  const filteredEmployees =
+    role === "Empleado"
+      ? employees.filter((employee) => {
+          console.log("Comparando:", String(employee._id), String(userId));
+          return String(employee._id) === String(userId); // Convertir a cadenas
+        })
+      : employees;
+
+
+  console.log("Empleados filtrados:", filteredEmployees);
+
   return (
     <div
       ref={drag}
       className="article-wrapper"
       style={{ opacity: isDragging ? 0.5 : 1 }}
     >
-      {/* Información de la tarea */}
       <div className="container-project">
         <h4 className="task-title">{task.nombre}</h4>
         <p className="task-description">{task.descripcion}</p>
-        {task.assignedTo && (
-          <p className="assigned-to">
-            Asignado a: {employees.find((e) => e._id === task.assignedTo)?.nombre || "Desconocido"}
-          </p>
+        {task.Asignado && (
+          <p className="task-assigned">Asignado a: {getEmployeeName(task.Asignado)}</p>
         )}
       </div>
       <div className="project-info">
         <span className="project-type">{task.progresion}</span>
       </div>
-
-      {/* Menú de opciones */}
       <div className="task-menu">
-        <button
-          className="menu-toggle"
-          onClick={toggleMenu}
-          aria-label="Abrir menú de opciones"
-        >
+        <button className="menu-toggle" onClick={toggleMenu}>
           ⋮
         </button>
         {menuOpen && (
           <div className="menu-dropdown">
-            {/* Opciones para administradores */}
-            {["Administrador App", "Administrador Org", "Administrador Dept"].includes(
-              userRole
-            ) && (
+            {role !== "Empleado" && (
               <>
                 <button onClick={() => onEdit(task)}>Editar</button>
                 <button onClick={() => onDelete(task._id)}>Eliminar</button>
                 <button onClick={() => onCancel(task._id)}>Cancelar</button>
               </>
             )}
-
-            {/* Asignación de tareas */}
             <div className="assign-section">
               <label htmlFor={`assign-${task._id}`}>Asignar a:</label>
               <select
@@ -100,7 +87,9 @@ const Task = ({ task, employees, onEdit, onDelete, onCancel, onAssign }) => {
                 value={selectedEmployee}
                 onChange={(e) => setSelectedEmployee(e.target.value)}
               >
-                {filteredEmployees.length > 0 ? (
+                {filteredEmployees.length === 0 ? (
+                  <option value="">No hay empleados disponibles</option>
+                ) : (
                   <>
                     <option value="">Selecciona un empleado</option>
                     {filteredEmployees.map((employee) => (
@@ -109,11 +98,8 @@ const Task = ({ task, employees, onEdit, onDelete, onCancel, onAssign }) => {
                       </option>
                     ))}
                   </>
-                ) : (
-                  <option value="">No hay empleados disponibles</option>
                 )}
               </select>
-
               <button
                 onClick={handleAssign}
                 disabled={!selectedEmployee}
