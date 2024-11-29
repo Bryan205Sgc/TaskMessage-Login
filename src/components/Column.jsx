@@ -32,11 +32,11 @@ const Column = ({
           <Task
             key={task._id}
             task={task}
+            employees={employees}
             onEdit={onEdit}
             onDelete={onDelete}
             onCancel={onCancel}
             onAssign={onAssign}
-            employees={employees}
           />
         ))
       ) : (

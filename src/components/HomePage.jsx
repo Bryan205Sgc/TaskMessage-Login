@@ -12,6 +12,7 @@ import {
   updateTaskToFinished,
   updateTaskToCancelled,
   updateTask,
+  fetchEmployees
 } from '../utils/api';
 import { socket } from '../sockets/socket';
 import { jwtDecode } from 'jwt-decode';
@@ -19,6 +20,7 @@ import '../styles/TaskBoard.css';
 
 const TaskBoard = () => {
   const [tasks, setTasks] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isCancelledModalOpen, setCancelledModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -41,6 +43,28 @@ const TaskBoard = () => {
   }, []);
 
   useEffect(() => {
+    fetchEmployees()
+      .then((response) => {
+        console.log("Respuesta completa del backend para empleados:", response);
+  
+        // Extrae los empleados correctamente de `response.data.employees`
+        if (response.data && Array.isArray(response.data.employees)) {
+          setEmployees(response.data.employees); // Actualiza el estado
+          console.log("Empleados correctamente cargados:", response.data.employees);
+        } else {
+          console.error("Los datos de empleados no son válidos:", response);
+          setEmployees([]); // Si no hay empleados válidos, reinicia el estado
+        }
+      })
+      .catch((err) => console.error("Error fetching employees:", err));
+  }, []);
+  
+  
+  useEffect(() => {
+    console.log("Empleados en el estado:", employees); // Verifica el estado después de actualizarlo
+  }, [employees]);
+  
+  useEffect(() => {
     fetchTasks()
       .then((res) => setTasks(res.data.tasks))
       .catch((err) => console.error('Error al obtener las tareas:', err));
@@ -55,6 +79,20 @@ const TaskBoard = () => {
       socket.off('task-updated');
     };
   }, []);
+
+  const handleAssignTask = (taskId, employeeId) => {
+    console.log(`Asignando tarea ${taskId} al empleado ${employeeId}`);
+    
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task._id === taskId
+          ? { ...task, assignedTo: employeeId }
+          : task
+      )
+    );
+  };
+  
+  
 
   const handleCreateTask = (newTask) => {
     createTask(newTask)
@@ -183,44 +221,34 @@ const TaskBoard = () => {
         <Column
           title="No iniciado"
           tasks={tasksByStatus('No iniciado')}
+          employees={employees}
           onDrop={(taskId) => handleUpdateTask(taskId, 'No iniciado')}
-          onEdit={
-            role !== 'Empleado' ? handleOpenEditModal : undefined
-          }
-          onDelete={
-            role !== 'Empleado' ? handleDeleteTask : undefined
-          }
-          onCancel={
-            role !== 'Empleado' ? handleCancelTask : undefined
-          }
+          onEdit={role !== 'Empleado' ? handleOpenEditModal : undefined}
+          onDelete={role !== 'Empleado' ? handleDeleteTask : undefined}
+          onCancel={role !== 'Empleado' ? handleCancelTask : undefined}
+          onAssign={handleAssignTask}
         />
+
         <Column
-          title="En proceso"
-          tasks={tasksByStatus('En proceso')}
-          onDrop={(taskId) => handleUpdateTask(taskId, 'En proceso')}
-          onEdit={
-            role !== 'Empleado' ? handleOpenEditModal : undefined
-          }
-          onDelete={
-            role !== 'Empleado' ? handleDeleteTask : undefined
-          }
-          onCancel={
-            role !== 'Empleado' ? handleCancelTask : undefined
-          }
+          title="En Proceso"
+          tasks={tasksByStatus('En Proceso')}
+          employees={employees} 
+          onDrop={(taskId) => handleUpdateTask(taskId, 'En Proceso')}
+          onEdit={role !== 'Empleado' ? handleOpenEditModal : undefined}
+          onDelete={role !== 'Empleado' ? handleDeleteTask : undefined}
+          onCancel={role !== 'Empleado' ? handleCancelTask : undefined}
+          onAssign={handleAssignTask}
         />
+
         <Column
           title="Finalizado"
           tasks={tasksByStatus('Finalizado')}
+          employees={employees} 
           onDrop={(taskId) => handleUpdateTask(taskId, 'Finalizado')}
-          onEdit={
-            role !== 'Empleado' ? handleOpenEditModal : undefined
-          }
-          onDelete={
-            role !== 'Empleado' ? handleDeleteTask : undefined
-          }
-          onCancel={
-            role !== 'Empleado' ? handleCancelTask : undefined
-          }
+          onEdit={role !== 'Empleado' ? handleOpenEditModal : undefined}
+          onDelete={role !== 'Empleado' ? handleDeleteTask : undefined}
+          onCancel={role !== 'Empleado' ? handleCancelTask : undefined}
+          onAssign={handleAssignTask}
         />
       </div>
       <CreateTaskModal
