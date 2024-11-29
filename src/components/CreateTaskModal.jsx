@@ -61,7 +61,7 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate }) => {
         >
           <option value="">Seleccionar Departamento</option>
           <option value="67350ce0af555b55505d6bf4">Departamento 1</option>
-          <option value="otro-departamento-id">Departamento 2</option>
+          <option value="67350d03af8bf18868e03f02">Departamento 2</option>
           {/* Agrega más departamentos según sea necesario */}
         </select>
         <div className="modal-actions">
